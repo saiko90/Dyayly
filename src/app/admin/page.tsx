@@ -16,6 +16,7 @@ export default function AdminDashboard() {
   const [mounted, setMounted] = useState(false);
   const [products, setProducts] = useState<any[]>([]);
   const [clients, setClients] = useState<any[]>([]);
+  const [analytics, setAnalytics] = useState<any[]>([]);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
@@ -33,6 +34,11 @@ export default function AdminDashboard() {
   const fetchClients = async () => {
     const { data, error } = await supabase.from('subscribers').select('*');
     if (!error && data) setClients(data);
+  };
+
+  const fetchAnalytics = async () => {
+    const { data, error } = await supabase.from('analytics').select('*');
+    if (!error && data) setAnalytics(data);
   };
 
   const handleDeleteProduct = async (id: string) => {
@@ -129,6 +135,7 @@ export default function AdminDashboard() {
       toast.success('Accès Administrateur autorisé', { icon: '🔓' });
       fetchProducts();
       fetchClients();
+      fetchAnalytics();
     } else {
       toast.error('Mot de passe incorrect', { icon: '❌' });
     }
@@ -385,18 +392,32 @@ export default function AdminDashboard() {
 
           {/* ONGLET STATISTIQUES */}
           {activeTab === 'stats' && (() => {
-            // Groupement des clients réels par jour pour le graphique
-            const clientsByDate = clients.reduce((acc, client) => {
-              const date = new Date(client.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
-              acc[date] = (acc[date] || 0) + 1;
+            // Groupement de TOUTES les datas Analytics (visites, ajouts au panier, commandes)
+            const analyticsByDate = analytics.reduce((acc, event) => {
+              const date = new Date(event.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+              if (!acc[date]) acc[date] = { name: date, Visites: 0, Paniers: 0, Commandes: 0 };
+              
+              if (event.event_type === 'visit') acc[date].Visites += 1;
+              if (event.event_type === 'cart_add') acc[date].Paniers += 1;
+              if (event.event_type === 'order') acc[date].Commandes += 1;
+              
               return acc;
             }, {});
 
-            // Transformation en tableau pour Recharts
-            const chartData = Object.keys(clientsByDate).map(date => ({
-              name: date,
-              Inscrits: clientsByDate[date]
-            })).slice(-10); // Les 10 derniers jours avec inscriptions
+            // Tri par date
+            const chartData = Object.values(analyticsByDate).sort((a: any, b: any) => {
+              // Petit hack de tri simple pour le format "dd MMM" (ex: "04 mars")
+              const partsA = a.name.split(' ');
+              const partsB = b.name.split(' ');
+              return parseInt(partsA[0]) - parseInt(partsB[0]);
+            }).slice(-10);
+
+            const totalVisits = analytics.filter(e => e.event_type === 'visit').length;
+            const totalCarts = analytics.filter(e => e.event_type === 'cart_add').length;
+            const totalOrders = analytics.filter(e => e.event_type === 'order').length;
+            
+            // Estimation fictive pour le CA en fonction des commandes trouvées (75 CHF par commande en moyenne)
+            const estimatedCA = totalOrders * 75;
 
             return (
               <motion.div 
@@ -405,39 +426,44 @@ export default function AdminDashboard() {
                 className="space-y-8"
               >
                 <div>
-                  <h2 className="text-3xl font-serif italic text-stone-900 mb-2">Statistiques de la Boutique</h2>
-                  <p className="text-stone-500 font-light">Données réelles extraites de votre base de données.</p>
+                  <h2 className="text-3xl font-serif italic text-stone-900 mb-2">Statistiques de Trafic</h2>
+                  <p className="text-stone-500 font-light">Analyse des visites et comportements d'achat.</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                   <div className="bg-white p-8 rounded-3xl shadow-sm border border-stone-200">
-                    <h4 className="text-stone-500 text-sm uppercase tracking-widest mb-4">Total Produits</h4>
-                    <p className="text-5xl font-serif text-stone-900">{products.length}</p>
-                    <p className="text-green-500 text-sm mt-2 flex items-center gap-1">Visibles en ligne</p>
+                    <h4 className="text-stone-500 text-xs uppercase tracking-widest mb-4">Visiteurs Totaux</h4>
+                    <p className="text-4xl font-serif text-stone-900">{totalVisits}</p>
                   </div>
                   <div className="bg-white p-8 rounded-3xl shadow-sm border border-stone-200">
-                    <h4 className="text-stone-500 text-sm uppercase tracking-widest mb-4">Membres inscrits</h4>
-                    <p className="text-5xl font-serif text-purple-600">{clients.length}</p>
-                    <p className="text-stone-400 text-sm mt-2 flex items-center gap-1">Clients & Newsletter</p>
+                    <h4 className="text-stone-500 text-xs uppercase tracking-widest mb-4">Mises au panier</h4>
+                    <p className="text-4xl font-serif text-purple-600">{totalCarts}</p>
                   </div>
                   <div className="bg-white p-8 rounded-3xl shadow-sm border border-stone-200">
-                    <h4 className="text-stone-500 text-sm uppercase tracking-widest mb-4">Chiffre d'Affaires</h4>
-                    <p className="text-5xl font-serif text-amber-500">0 <span className="text-2xl text-stone-400">CHF</span></p>
-                    <p className="text-stone-400 text-sm mt-2 flex items-center gap-1">Aucune commande finalisée</p>
+                    <h4 className="text-stone-500 text-xs uppercase tracking-widest mb-4">Commandes</h4>
+                    <p className="text-4xl font-serif text-green-600">{totalOrders}</p>
+                  </div>
+                  <div className="bg-white p-8 rounded-3xl shadow-sm border border-stone-200 bg-amber-50">
+                    <h4 className="text-amber-800 text-xs uppercase tracking-widest mb-4">Chiffre d'Affaires</h4>
+                    <p className="text-4xl font-serif text-amber-600">{estimatedCA} <span className="text-xl">CHF</span></p>
                   </div>
                 </div>
 
                 {/* GRAPHIQUE DESIGN (Recharts) */}
                 <div className="bg-white p-8 rounded-3xl shadow-sm border border-stone-200 mt-8">
-                  <h4 className="text-stone-800 text-lg font-serif italic mb-6">Évolution des inscriptions clients</h4>
-                  <div className="h-64 w-full">
+                  <h4 className="text-stone-800 text-lg font-serif italic mb-6">Trafic et Conversions (7 derniers jours)</h4>
+                  <div className="h-72 w-full">
                     {chartData.length > 0 ? (
                       <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={chartData}>
                           <defs>
-                            <linearGradient id="colorInscrits" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#d8b4fe" stopOpacity={0.8}/>
+                            <linearGradient id="colorVisites" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#d8b4fe" stopOpacity={0.4}/>
                               <stop offset="95%" stopColor="#d8b4fe" stopOpacity={0}/>
+                            </linearGradient>
+                            <linearGradient id="colorPaniers" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#fbbf24" stopOpacity={0.8}/>
+                              <stop offset="95%" stopColor="#fbbf24" stopOpacity={0}/>
                             </linearGradient>
                           </defs>
                           <XAxis dataKey="name" stroke="#a8a29e" fontSize={12} tickLine={false} axisLine={false} />
@@ -445,12 +471,14 @@ export default function AdminDashboard() {
                           <Tooltip 
                             contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }} 
                           />
-                          <Area type="monotone" dataKey="Inscrits" stroke="#a855f7" strokeWidth={3} fillOpacity={1} fill="url(#colorInscrits)" />
+                          <Area type="monotone" name="Visiteurs" dataKey="Visites" stroke="#a855f7" strokeWidth={3} fillOpacity={1} fill="url(#colorVisites)" />
+                          <Area type="monotone" name="Ajouts Panier" dataKey="Paniers" stroke="#fbbf24" strokeWidth={3} fillOpacity={1} fill="url(#colorPaniers)" />
                         </AreaChart>
                       </ResponsiveContainer>
                     ) : (
-                      <div className="flex h-full items-center justify-center text-stone-400 font-light">
-                        Pas encore assez de données pour générer le graphique.
+                      <div className="flex flex-col h-full items-center justify-center text-stone-400 font-light gap-2">
+                        <BarChart3 className="w-8 h-8 opacity-50" />
+                        Exécutez le script update_supabase.sql pour générer la table d'analytics
                       </div>
                     )}
                   </div>

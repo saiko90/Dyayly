@@ -6,7 +6,8 @@ import Image from 'next/image';
 export default function AnimatedLogo() {
   const { scrollYProgress } = useScroll();
   
-  const rotateSunflower = useTransform(scrollYProgress, [0, 1], [0, 180]);
+  // Augmentation massive de la rotation (2 tours complets sur toute la page)
+  const rotateSunflower = useTransform(scrollYProgress, [0, 1], [0, 720]);
   const scaleSunflower = useTransform(scrollYProgress, [0, 0.3], [1, 1.15]);
 
   return (

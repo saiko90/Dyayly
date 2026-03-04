@@ -87,51 +87,55 @@ export default function Navbar() {
         </div>
       </motion.nav>
 
-      {/* MENU FULLSCREEN MOBILE */}
+      {/* MENU MOBILE ÉLÉGANT (Type Drawer) */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[60] bg-[#FDFBF7]/95 backdrop-blur-3xl flex flex-col items-center justify-center"
-          >
-            <button 
-              className="absolute top-8 right-8 text-stone-800 p-2"
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
+              className="fixed inset-0 bg-stone-900/30 backdrop-blur-sm z-[60] md:hidden"
+            />
+            <motion.div
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-0 left-0 h-full w-[85%] max-w-sm bg-[#FDFBF7] shadow-2xl z-[70] flex flex-col md:hidden"
             >
-              <X className="w-8 h-8" />
-            </button>
-
-            <div className="flex flex-col gap-8 text-center">
-              {links.map((link, i) => (
-                <motion.div
-                  key={link.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 + 0.1 }}
+              <div className="p-6 flex justify-between items-center border-b border-stone-200">
+                <span className="font-serif italic text-2xl text-stone-800">Dyayly</span>
+                <button 
+                  onClick={() => setIsOpen(false)}
+                  className="p-2 bg-stone-100 rounded-full text-stone-600 hover:bg-stone-200 transition"
                 >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-8 flex flex-col gap-6">
+                {links.map((link) => (
                   <Link 
+                    key={link.name}
                     href={link.path} 
                     onClick={() => setIsOpen(false)}
-                    className="text-4xl font-serif italic text-stone-800 hover:text-amber-600 transition-colors"
+                    className="text-3xl font-serif italic text-stone-800 hover:text-amber-600 transition-colors border-b border-stone-100 pb-4"
                   >
                     {link.name}
                   </Link>
-                </motion.div>
-              ))}
-            </div>
-            
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="absolute bottom-12 text-xs uppercase tracking-[0.3em] text-amber-800/60"
-            >
-              L'amour tissé en bijoux
+                ))}
+              </div>
+              
+              <div className="p-8 bg-stone-50 border-t border-stone-200 mt-auto">
+                <p className="text-[10px] uppercase tracking-[0.3em] text-stone-500 mb-2">Suivez-nous</p>
+                <a href="https://instagram.com/dyayly555" target="_blank" className="text-sm font-light text-stone-800 hover:text-amber-600 transition">
+                  @dyayly555
+                </a>
+              </div>
             </motion.div>
-          </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>

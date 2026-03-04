@@ -28,11 +28,24 @@ export const metadata: Metadata = {
   title: "Dyayly | L'amour tissé en bijoux",
   description: "Créations artisanales de bijoux avec intention. Passage de l'ombre à la lumière. Ateliers de création et cercles de parole en Suisse.",
   keywords: ["bijoux artisanaux", "fait main", "spiritualité", "pierres naturelles", "ateliers création", "Suisse", "Dyayly"],
+  icons: {
+    icon: '/logo-sunflower.jpeg',
+    shortcut: '/logo-sunflower.jpeg',
+    apple: '/logo-sunflower.jpeg',
+  },
   openGraph: {
     title: "Dyayly | L'amour tissé en bijoux",
     description: "Des bijoux faits à la main pour accompagner les renaissances intérieures et faire briller les âmes.",
     type: "website",
     locale: "fr_CH",
+    images: [
+      {
+        url: '/logo-sunflower.jpeg',
+        width: 800,
+        height: 800,
+        alt: 'Dyayly - L\'amour tissé en bijoux',
+      }
+    ],
   }
 };
 

@@ -4,7 +4,7 @@ import { motion, useSpring, useMotionValue, MotionValue } from 'framer-motion';
 import { useEffect, useState, useRef } from 'react';
 
 // 1. Petit composant interne pour UNE étoile fixe (optimisation)
-const Star = ({ star }: { star: { id: number, x: string, y: string, color: string, size: number } }) => (
+const Star = ({ star }: { star: { id: number, x: string, y: string, color: string, size: number, isMobile: boolean } }) => (
   <motion.div
     key={star.id}
     className="absolute rounded-full"
@@ -14,15 +14,16 @@ const Star = ({ star }: { star: { id: number, x: string, y: string, color: strin
       backgroundColor: star.color,
       width: star.size,
       height: star.size,
-      boxShadow: `0 0 ${star.size * 4}px ${star.size}px ${star.color}80`
+      // On retire le box-shadow lourd sur mobile pour sauver les performances
+      boxShadow: star.isMobile ? 'none' : `0 0 ${star.size * 3}px ${star.size}px ${star.color}60`,
+      willChange: 'transform, opacity'
     }}
     animate={{ 
       opacity: [0.2, 1, 0.2], 
-      scale: [1, 1.5, 1],
-      rotate: [0, 180, 360] 
+      scale: [1, 1.2, 1] 
     }}
     transition={{ 
-      duration: 2 + (star.id % 5), 
+      duration: 3 + (star.id % 5), 
       repeat: Infinity, 
       ease: "easeInOut" 
     }}
@@ -31,6 +32,7 @@ const Star = ({ star }: { star: { id: number, x: string, y: string, color: strin
 
 export default function MagicBackground() {
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   
   // Coordonnées exactes de la souris en pixels
   const mouseX = useMotionValue(-100);
@@ -46,6 +48,10 @@ export default function MagicBackground() {
 
   useEffect(() => {
     setMounted(true);
+    
+    // Détection mobile pour réduire la charge GPU
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
     
     // Suivi de la souris
     const handleMouseMove = (e: MouseEvent) => {
@@ -82,23 +88,26 @@ export default function MagicBackground() {
 
   if (!mounted) return null;
 
-  // On génère les étoiles de fond (statiques mais qui clignotent doucement)
-  const stars = Array.from({ length: 150 }).map((_, i) => ({
+  // Optimisation extrême : Moins d'étoiles sur mobile
+  const starCount = isMobile ? 40 : 100;
+  const stars = Array.from({ length: starCount }).map((_, i) => ({
     id: i,
     x: `${Math.random() * 100}%`,
     y: `${Math.random() * 100}%`,
-    color: i % 3 === 0 ? '#ffffff' : (i % 2 === 0 ? '#fbbf24' : '#d8b4fe'), // Blanc, Or, Lila
-    size: Math.random() * 3 + 2 // Taille entre 2px et 5px
+    color: i % 3 === 0 ? '#ffffff' : (i % 2 === 0 ? '#fbbf24' : '#d8b4fe'), 
+    size: Math.random() * 2 + 1.5,
+    isMobile
   }));
 
-  // Particules qui flottent de bas en haut (Confettis magiques blancs et lila)
-  const particles = Array.from({ length: 50 }).map((_, i) => ({
+  // Moins de particules sur mobile et suppression des effets lourds
+  const particleCount = isMobile ? 12 : 35;
+  const particles = Array.from({ length: particleCount }).map((_, i) => ({
     id: `p-${i}`,
     x: `${Math.random() * 100}vw`,
-    color: i % 2 === 0 ? '#d8b4fe' : '#ffffff', // Lila ou Blanc
-    duration: Math.random() * 8 + 8,
+    color: i % 2 === 0 ? '#d8b4fe' : '#ffffff',
+    duration: Math.random() * 10 + 12, // Plus lent pour éviter le lag visuel
     delay: Math.random() * 5,
-    size: Math.random() * 5 + 3
+    size: Math.random() * 3 + 2
   }));
 
   // Définition des couleurs néon
@@ -110,11 +119,14 @@ export default function MagicBackground() {
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
       {/* 1. FOND ACCENTUÉ (Féerique) */}
       <div className="absolute inset-0 bg-[#f9f5eb]" />
-      {/* Lumières d'ambiance plus fortes */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-amber-300/30 via-transparent to-purple-500/20" />
-      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-amber-200/40 blur-[150px] rounded-full mix-blend-multiply" />
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-purple-300/40 blur-[120px] rounded-full mix-blend-multiply" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-rose-200/30 blur-[100px] rounded-full mix-blend-multiply" />
+      {/* Lumières d'ambiance statiques (mix-blend-multiply retiré sur mobile car très lourd GPU) */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-amber-300/20 via-transparent to-purple-500/10" />
+      <div className="hidden md:block absolute top-0 right-0 w-[800px] h-[800px] bg-amber-200/30 blur-[120px] rounded-full mix-blend-multiply transform-gpu" />
+      <div className="hidden md:block absolute bottom-0 left-0 w-[600px] h-[600px] bg-purple-300/30 blur-[100px] rounded-full mix-blend-multiply transform-gpu" />
+      
+      {/* Taches de lumière version allégée pour mobile */}
+      <div className="md:hidden absolute top-0 right-0 w-[300px] h-[300px] bg-amber-200/40 blur-[80px] rounded-full transform-gpu" />
+      <div className="md:hidden absolute bottom-0 left-0 w-[300px] h-[300px] bg-purple-300/40 blur-[80px] rounded-full transform-gpu" />
 
       {/* 2. ÉTOILES DE FOND */}
       {stars.map((star) => (
@@ -132,11 +144,12 @@ export default function MagicBackground() {
             backgroundColor: p.color,
             width: p.size,
             height: p.size,
-            boxShadow: `0 0 ${p.size * 3}px ${p.size}px ${p.color}80`
+            boxShadow: isMobile ? 'none' : `0 0 ${p.size * 2}px ${p.size}px ${p.color}50`,
+            willChange: 'transform, opacity' // Indication GPU
           }}
           animate={{
-            y: ['0vh', '-120vh'],
-            x: ['0vw', `${(Math.random() - 0.5) * 20}vw`],
+            y: ['10vh', '-110vh'],
+            x: ['0vw', `${(Math.random() - 0.5) * 10}vw`], // Mouvement X réduit pour moins de calculs
             opacity: [0, 0.8, 0]
           }}
           transition={{

@@ -18,7 +18,11 @@ export default function BoutiquePage() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const { data } = await supabase.from('products').select('*').eq('is_online', true);
+      // On retire le filtre is_online au cas où la colonne serait absente ou null dans Supabase
+      const { data, error } = await supabase.from('products').select('*');
+      if (error) {
+        console.error("Erreur de récupération des produits:", error);
+      }
       if (data) {
         setProducts(data);
       }
@@ -63,20 +67,24 @@ export default function BoutiquePage() {
 
       {/* SECTION TARIFS (Grille de produits) */}
       <section className="relative z-10 px-4 md:px-6 max-w-6xl mx-auto mb-24">
-        <motion.div 
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8"
-        >
-          {products.map((item, i) => (
-            <motion.div 
-              key={item.id || i} 
-              variants={fadeUp}
-              whileHover={{ y: -8, scale: 1.02 }}
-              className="bg-white/40 backdrop-blur-xl border border-white/60 p-6 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group overflow-hidden"
-            >
+        {products.length === 0 ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="w-8 h-8 rounded-full border-4 border-amber-300 border-t-transparent animate-spin" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            {products.map((item, i) => (
+              <motion.div 
+                key={item.id || i} 
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true }}
+                variants={fadeUp}
+                custom={i}
+                transition={{ delay: i * 0.1 }}
+                whileHover={{ y: -8, scale: 1.02 }}
+                className="bg-white/40 backdrop-blur-xl border border-white/60 p-6 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group overflow-hidden"
+              >
               {/* IMAGE DU PRODUIT */}
               <div className="relative w-full aspect-square mb-6 rounded-2xl overflow-hidden bg-stone-100">
                 <img 
@@ -100,8 +108,6 @@ export default function BoutiquePage() {
                   onClick={() => {
                     addItem({ id: item.id, title: item.title, price: item.price });
                     toast(`✨ ${item.title} ajouté au panier !`);
-                    // Optionnel: On peut choisir de ne plus ouvrir le tiroir automatiquement si on a un Toast
-                    // toggleDrawer();
                   }}
                   className="p-3 bg-stone-900 text-amber-100 rounded-full hover:bg-stone-800 transition-colors shadow-lg"
                 >
@@ -109,8 +115,9 @@ export default function BoutiquePage() {
                 </button>
               </div>
             </motion.div>
-          ))}
-        </motion.div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* SECTION PERSONNALISATION & MATÉRIAUX */}

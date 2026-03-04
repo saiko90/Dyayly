@@ -36,7 +36,7 @@ export default function AnimatedLogo() {
           src="/logo-sunflower.jpeg" 
           alt="Dyayly Logo"
           fill
-          sizes="(max-width: 768px) 100vw, 50vw" /* Correction de l'avertissement console */
+          sizes="(max-width: 768px) 100vw, 50vw" 
           className="object-contain rounded-full"
           priority
         />
@@ -45,7 +45,7 @@ export default function AnimatedLogo() {
       {/* Texte subtil */}
       <div className="absolute z-20 top-[45%] left-1/2 -translate-x-1/2 text-center pointer-events-none">
         <p className="text-[10px] uppercase font-light tracking-[0.3em] text-amber-900/60 leading-tight">
-          L'amour tissé<br/>en bijoux
+          
         </p>
       </div>
     </div>

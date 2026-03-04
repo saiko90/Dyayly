@@ -9,6 +9,7 @@ import {
 import toast from 'react-hot-toast';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -383,36 +384,80 @@ export default function AdminDashboard() {
           )}
 
           {/* ONGLET STATISTIQUES */}
-          {activeTab === 'stats' && (
-            <motion.div 
-              key="stats"
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
-              className="space-y-8"
-            >
-              <div>
-                <h2 className="text-3xl font-serif italic text-stone-900 mb-2">Statistiques</h2>
-                <p className="text-stone-500 font-light">Analysez les visites et les ventes de votre boutique.</p>
-              </div>
+          {activeTab === 'stats' && (() => {
+            // Groupement des clients réels par jour pour le graphique
+            const clientsByDate = clients.reduce((acc, client) => {
+              const date = new Date(client.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+              acc[date] = (acc[date] || 0) + 1;
+              return acc;
+            }, {});
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white p-8 rounded-3xl shadow-sm border border-stone-200">
-                  <h4 className="text-stone-500 text-sm uppercase tracking-widest mb-4">Total Produits</h4>
-                  <p className="text-5xl font-serif text-stone-900">{products.length}</p>
-                  <p className="text-green-500 text-sm mt-2 flex items-center gap-1">En boutique actuellement</p>
+            // Transformation en tableau pour Recharts
+            const chartData = Object.keys(clientsByDate).map(date => ({
+              name: date,
+              Inscrits: clientsByDate[date]
+            })).slice(-10); // Les 10 derniers jours avec inscriptions
+
+            return (
+              <motion.div 
+                key="stats"
+                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+                className="space-y-8"
+              >
+                <div>
+                  <h2 className="text-3xl font-serif italic text-stone-900 mb-2">Statistiques de la Boutique</h2>
+                  <p className="text-stone-500 font-light">Données réelles extraites de votre base de données.</p>
                 </div>
-                <div className="bg-white p-8 rounded-3xl shadow-sm border border-stone-200">
-                  <h4 className="text-stone-500 text-sm uppercase tracking-widest mb-4">Membres inscrits</h4>
-                  <p className="text-5xl font-serif text-amber-600">{clients.length}</p>
-                  <p className="text-stone-400 text-sm mt-2 flex items-center gap-1">Prêts pour la newsletter</p>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="bg-white p-8 rounded-3xl shadow-sm border border-stone-200">
+                    <h4 className="text-stone-500 text-sm uppercase tracking-widest mb-4">Total Produits</h4>
+                    <p className="text-5xl font-serif text-stone-900">{products.length}</p>
+                    <p className="text-green-500 text-sm mt-2 flex items-center gap-1">Visibles en ligne</p>
+                  </div>
+                  <div className="bg-white p-8 rounded-3xl shadow-sm border border-stone-200">
+                    <h4 className="text-stone-500 text-sm uppercase tracking-widest mb-4">Membres inscrits</h4>
+                    <p className="text-5xl font-serif text-purple-600">{clients.length}</p>
+                    <p className="text-stone-400 text-sm mt-2 flex items-center gap-1">Clients & Newsletter</p>
+                  </div>
+                  <div className="bg-white p-8 rounded-3xl shadow-sm border border-stone-200">
+                    <h4 className="text-stone-500 text-sm uppercase tracking-widest mb-4">Chiffre d'Affaires</h4>
+                    <p className="text-5xl font-serif text-amber-500">0 <span className="text-2xl text-stone-400">CHF</span></p>
+                    <p className="text-stone-400 text-sm mt-2 flex items-center gap-1">Aucune commande finalisée</p>
+                  </div>
                 </div>
-                <div className="bg-white p-8 rounded-3xl shadow-sm border border-stone-200">
-                  <h4 className="text-stone-500 text-sm uppercase tracking-widest mb-4">Chiffre d'Affaires (Est.)</h4>
-                  <p className="text-5xl font-serif text-stone-900">1,450 <span className="text-2xl text-stone-400">CHF</span></p>
-                  <p className="text-stone-400 text-sm mt-2 flex items-center gap-1">Données à lier avec Stripe</p>
+
+                {/* GRAPHIQUE DESIGN (Recharts) */}
+                <div className="bg-white p-8 rounded-3xl shadow-sm border border-stone-200 mt-8">
+                  <h4 className="text-stone-800 text-lg font-serif italic mb-6">Évolution des inscriptions clients</h4>
+                  <div className="h-64 w-full">
+                    {chartData.length > 0 ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={chartData}>
+                          <defs>
+                            <linearGradient id="colorInscrits" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#d8b4fe" stopOpacity={0.8}/>
+                              <stop offset="95%" stopColor="#d8b4fe" stopOpacity={0}/>
+                            </linearGradient>
+                          </defs>
+                          <XAxis dataKey="name" stroke="#a8a29e" fontSize={12} tickLine={false} axisLine={false} />
+                          <YAxis stroke="#a8a29e" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
+                          <Tooltip 
+                            contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }} 
+                          />
+                          <Area type="monotone" dataKey="Inscrits" stroke="#a855f7" strokeWidth={3} fillOpacity={1} fill="url(#colorInscrits)" />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-stone-400 font-light">
+                        Pas encore assez de données pour générer le graphique.
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          )}
+              </motion.div>
+            );
+          })()}
 
           {/* ONGLET CLIENTS */}
           {activeTab === 'clients' && (

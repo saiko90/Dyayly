@@ -45,15 +45,17 @@ export default function Navbar() {
         className="fixed top-4 md:top-6 inset-x-4 md:inset-x-0 mx-auto z-50 max-w-5xl md:max-w-fit px-6 py-4 rounded-full border border-white/40 bg-white/20 backdrop-blur-2xl shadow-lg flex justify-between items-center"
       >
         {/* Logo Mobile (visible uniquement sur petit écran) */}
-        <div className="md:hidden font-serif italic text-xl text-stone-800 tracking-widest">
+        <Link href="/" className="md:hidden font-serif italic text-xl text-stone-800 tracking-widest hover:text-amber-600 transition-colors">
           Dyayly
-        </div>
+        </Link>
 
         {/* Liens Desktop */}
         <ul className="hidden md:flex items-center gap-10 text-xs uppercase tracking-[0.2em] font-light text-stone-800">
           <li className="hover:text-amber-600 transition-colors"><Link href="/">Accueil</Link></li>
           <li className="hover:text-amber-600 transition-colors"><Link href="/histoire">Histoire</Link></li>
-          <li className="text-lg font-serif italic lowercase tracking-normal px-4 border-x border-stone-400">Dyayly</li>
+          <li className="text-lg font-serif italic lowercase tracking-normal px-4 border-x border-stone-400 hover:text-amber-600 transition-colors">
+            <Link href="/">Dyayly</Link>
+          </li>
           <li className="hover:text-amber-600 transition-colors"><Link href="/boutique">Boutique</Link></li>
           <li className="hover:text-amber-600 transition-colors"><Link href="/ateliers">Ateliers</Link></li>
         </ul>
@@ -106,7 +108,9 @@ export default function Navbar() {
               className="fixed top-0 left-0 h-full w-[85%] max-w-sm bg-[#FDFBF7] shadow-2xl z-[70] flex flex-col md:hidden"
             >
               <div className="p-6 flex justify-between items-center border-b border-stone-200">
-                <span className="font-serif italic text-2xl text-stone-800">Dyayly</span>
+                <Link href="/" onClick={() => setIsOpen(false)} className="font-serif italic text-2xl text-stone-800 hover:text-amber-600 transition-colors">
+                  Dyayly
+                </Link>
                 <button 
                   onClick={() => setIsOpen(false)}
                   className="p-2 bg-stone-100 rounded-full text-stone-600 hover:bg-stone-200 transition"

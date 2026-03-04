@@ -7,10 +7,24 @@ import Navbar from '../components/Navbar';
 import GlassContacts from '../components/GlassContacts';
 import { useCartStore } from '@/store/useCartStore';
 import toast from 'react-hot-toast';
+import { supabase } from '@/lib/supabase';
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 export default function BoutiquePage() {
   const addItem = useCartStore((state) => state.addItem);
   const toggleDrawer = useCartStore((state) => state.toggleDrawer);
+  const [products, setProducts] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const { data } = await supabase.from('products').select('*').eq('is_online', true);
+      if (data) {
+        setProducts(data);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   // Typage strict avec ": Variants"
   const fadeUp: Variants = {
@@ -25,13 +39,6 @@ export default function BoutiquePage() {
       transition: { staggerChildren: 0.2 }
     }
   };
-
-  const products = [
-    { id: "bracelet-simple", title: "Bracelet simple", price: 12, desc: "Tissé à la main, taille ajustable" },
-    { id: "bracelet-breloque", title: "Bracelet breloque & pierre", price: 18, desc: "Pierre naturelle, taille ajustable" },
-    { id: "collier-simple", title: "Collier simple", price: 28, desc: "Tissé à la main, taille ajustable" },
-    { id: "collier-prestige", title: "Collier prestige", price: 38, desc: "Chaîne, pierres naturelles et breloques" },
-  ];
 
   return (
     <main className="relative min-h-screen text-stone-900 selection:bg-purple-100 overflow-hidden pb-24">
@@ -65,16 +72,26 @@ export default function BoutiquePage() {
         >
           {products.map((item, i) => (
             <motion.div 
-              key={i} 
+              key={item.id || i} 
               variants={fadeUp}
               whileHover={{ y: -8, scale: 1.02 }}
-              className="bg-white/30 backdrop-blur-xl border border-white/50 p-8 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+              className="bg-white/40 backdrop-blur-xl border border-white/60 p-6 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group overflow-hidden"
             >
+              {/* IMAGE DU PRODUIT */}
+              <div className="relative w-full aspect-square mb-6 rounded-2xl overflow-hidden bg-stone-100">
+                <img 
+                  src={item.image_url || '/logo-sunflower.jpeg'} 
+                  alt={item.title}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+              </div>
+
               <div>
                 <h3 className="text-xl font-serif italic text-stone-800 mb-2">{item.title}</h3>
-                <p className="text-xs text-stone-500 font-light uppercase tracking-widest mb-6 leading-relaxed">{item.desc}</p>
+                <p className="text-xs text-stone-500 font-light uppercase tracking-widest mb-6 leading-relaxed">{item.description || "Création unique Dyayly"}</p>
               </div>
-              <div className="flex items-end justify-between border-t border-amber-200/50 pt-4 mt-auto">
+
+              <div className="flex items-end justify-between border-t border-amber-200/50 pt-4 mt-auto relative z-10">
                 <div>
                   <span className="text-3xl font-serif text-amber-700">{item.price}</span>
                   <span className="text-sm font-medium text-amber-900/60 ml-1 mb-1">CHF</span>

@@ -59,17 +59,17 @@ export default function CartDrawer() {
                       <p className="text-amber-700 font-medium">{item.price} CHF</p>
                     </div>
 
-                    <div className="flex items-center gap-3 bg-stone-50 rounded-full px-2 py-1 border border-stone-200">
+                    <div className="flex items-center gap-3 bg-stone-100 text-stone-800 rounded-full px-3 py-1.5 border border-stone-200 shadow-sm">
                       <button 
                         onClick={() => item.quantity > 1 ? updateQuantity(item.id, item.quantity - 1) : removeItem(item.id)}
-                        className="p-1 hover:text-amber-600 transition"
+                        className="p-1 hover:text-amber-600 text-stone-600 transition"
                       >
                         <Minus className="w-4 h-4" />
                       </button>
-                      <span className="text-sm font-medium w-4 text-center">{item.quantity}</span>
+                      <span className="text-sm font-bold w-4 text-center text-stone-900">{item.quantity}</span>
                       <button 
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="p-1 hover:text-amber-600 transition"
+                        className="p-1 hover:text-amber-600 text-stone-600 transition"
                       >
                         <Plus className="w-4 h-4" />
                       </button>

@@ -7,7 +7,7 @@ export default function AnimatedLogo() {
   const { scrollYProgress } = useScroll();
   
   // Augmentation massive de la rotation (2 tours complets sur toute la page)
-  const rotateSunflower = useTransform(scrollYProgress, [0, 1], [0, 720]);
+  const rotateSunflower = useTransform(scrollYProgress, [0, 1], [0, 1440]);
   const scaleSunflower = useTransform(scrollYProgress, [0, 0.3], [1, 1.15]);
 
   return (
@@ -42,12 +42,7 @@ export default function AnimatedLogo() {
         />
       </motion.div>
 
-      {/* Texte subtil */}
-      <div className="absolute z-20 top-[45%] left-1/2 -translate-x-1/2 text-center pointer-events-none">
-        <p className="text-[10px] uppercase font-light tracking-[0.3em] text-amber-900/60 leading-tight">
-          
-        </p>
-      </div>
+    
     </div>
   );
 }

@@ -105,9 +105,11 @@ export default function BoutiquePage() {
                   <span className="text-sm font-medium text-amber-900/60 ml-1 mb-1">CHF</span>
                 </div>
                 <button 
-                  onClick={() => {
+                  onClick={async () => {
                     addItem({ id: item.id, title: item.title, price: item.price });
                     toast(`✨ ${item.title} ajouté au panier !`);
+                    // Tracking
+                    await supabase.from('analytics').insert([{ event_type: 'cart_add', page_path: '/boutique' }]);
                   }}
                   className="p-3 bg-stone-900 text-amber-100 rounded-full hover:bg-stone-800 transition-colors shadow-lg"
                 >

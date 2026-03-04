@@ -17,6 +17,11 @@ export default function CheckoutPage() {
   const handleCheckout = async () => {
     try {
       setIsLoading(true);
+      
+      // Tracking
+      const { supabase } = await import('@/lib/supabase');
+      await supabase.from('analytics').insert([{ event_type: 'order', page_path: '/checkout' }]);
+
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -4,6 +4,7 @@ import "./globals.css";
 import CartDrawer from "./components/cart/CartDrawer";
 import MagicCursor from "./components/MagicCursor";
 import CookieBanner from "./components/CookieBanner";
+import Tracker from "./components/Tracker";
 import { Toaster } from 'react-hot-toast';
 
 // 1. Configuration de la police Serif (Titres élégants)
@@ -81,6 +82,7 @@ export default function RootLayout({
         {children}
         <CartDrawer />
         <MagicCursor />
+        <Tracker />
       </body>
     </html>
   );

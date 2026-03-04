@@ -1,26 +1,38 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
+@theme {
+  --font-sans: var(--font-montserrat), sans-serif;
+  --font-serif: var(--font-cormorant), serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+}
+
+/* Configuration globale du projet Dyayly */
+:root {
+  --background: #FDFBF7; /* Fond beige chaud */
+  --foreground: #1c1917; /* Texte stone-900 */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #1c1917;
+    --foreground: #FDFBF7;
   }
 }
 
 body {
-  background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--background);
+}
+
+
+/* Optimisation du scroll pour Framer Motion */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (min-width: 768px) {
+  html, body, a, button, [role="button"], input, textarea, select {
+    cursor: none !important;
+  }
 }

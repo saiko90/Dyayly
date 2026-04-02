@@ -2,15 +2,21 @@
 
 @theme {
   --font-sans: var(--font-montserrat), sans-serif;
-  --font-serif: var(--font-cormorant), serif;
+  --font-serif: var(--font-pinyon), cursive;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  /* Palette stone remplacée par des tons brun chocolat au lait */
+  --color-stone-950: #3B2010;
+  --color-stone-900: #5C3D1E;
+  --color-stone-800: #7A4E2D;
+  --color-stone-700: #8B5E3C;
+  --color-stone-600: #A67C52;
 }
 
 /* Configuration globale du projet Dyayly */
 :root {
   --background: #FDFBF7; /* Fond beige chaud */
-  --foreground: #1c1917; /* Texte stone-900 */
+  --foreground: #8B5E3C; /* Brun chocolat au lait */
 }
 
 @media (prefers-color-scheme: dark) {

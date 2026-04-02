@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Montserrat } from "next/font/google";
+import { Pinyon_Script, Montserrat } from "next/font/google";
 import "./globals.css";
 import CartDrawer from "./components/cart/CartDrawer";
 import MagicCursor from "./components/MagicCursor";
@@ -7,17 +7,16 @@ import CookieBanner from "./components/CookieBanner";
 import Tracker from "./components/Tracker";
 import { Toaster } from 'react-hot-toast';
 
-// 1. Configuration de la police Serif (Titres élégants)
-const cormorant = Cormorant_Garamond({ 
+// 1. Police calligraphique à la plume — écriture liée élégante
+const pinyonScript = Pinyon_Script({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  style: ["normal", "italic"],
-  variable: "--font-cormorant", // Variable CSS personnalisée
+  weight: ["400"],
+  variable: "--font-pinyon",
   display: "swap",
 });
 
 // 2. Configuration de la police Sans-Serif (Textes clairs et modernes)
-const montserrat = Montserrat({ 
+const montserrat = Montserrat({
   subsets: ["latin"],
   weight: ["300", "400", "500"],
   variable: "--font-montserrat",
@@ -58,7 +57,7 @@ export default function RootLayout({
   return (
     <html lang="fr" className="scroll-smooth">
       <body
-        className={`${cormorant.variable} ${montserrat.variable} font-sans bg-[#FDFBF7] text-stone-900 antialiased selection:bg-purple-200 selection:text-purple-900`}
+        className={`${pinyonScript.variable} ${montserrat.variable} font-sans bg-[#FDFBF7] text-[#8B5E3C] antialiased selection:bg-purple-200 selection:text-purple-900`}
       >
         <CookieBanner />
         <Toaster

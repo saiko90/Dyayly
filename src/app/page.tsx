@@ -4,7 +4,6 @@ import MagicBackground from './components/MagicBackground';
 import AnimatedLogo from './components/AnimatedLogo';
 import PriceCard from './components/PriceCard';
 import GlassContacts from './components/GlassContacts';
-import JewelryGallery from './components/JewelryGallery';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from './components/Navbar';
 import { useState } from 'react';
@@ -47,7 +46,7 @@ export default function Home() {
           transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
           className="text-center mt-12 z-20"
         >
-          <h1 className="text-7xl md:text-8xl font-serif mb-6 tracking-tighter italic text-stone-950 leading-none drop-shadow-sm">
+          <h1 className="text-7xl md:text-8xl font-serif mb-6 tracking-tighter italic text-[#C4956A] leading-none drop-shadow-sm">
             DYAYLY
           </h1>
           <p className="text-sm md:text-base font-light uppercase tracking-widest text-amber-800/90 mb-12">
@@ -148,12 +147,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* 6. Galerie Instagram */}
-      <section className="relative z-10 bg-white/30 backdrop-blur-lg">
-        <JewelryGallery />
-      </section>
-
-      {/* 7. Contacts (Glassmorphism ultime) */}
+      {/* 6. Contacts (Glassmorphism ultime) */}
       <section id="contacts" className="pt-24 pb-16 px-6 z-10 relative">
         <GlassContacts />
       </section>

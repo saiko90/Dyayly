@@ -10,16 +10,16 @@ import toast from 'react-hot-toast';
 
 export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCartStore();
-  const [mounted, setMounted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [mounted, setMounted]       = useState(false);
+  const [isLoading, setIsLoading]   = useState(false);
 
   // Champs du formulaire
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [address, setAddress] = useState('');
-  const [postalCode, setPostalCode] = useState('');
-  const [city, setCity] = useState('');
-  const [customerNote, setCustomerNote] = useState('');
+  const [fullName,      setFullName]      = useState('');
+  const [email,         setEmail]         = useState('');
+  const [address,       setAddress]       = useState('');
+  const [postalCode,    setPostalCode]    = useState('');
+  const [city,          setCity]          = useState('');
+  const [customerNote,  setCustomerNote]  = useState('');
 
   useEffect(() => setMounted(true), []);
 
@@ -29,42 +29,54 @@ export default function CheckoutPage() {
       return;
     }
 
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       const { supabase } = await import('@/lib/supabase');
 
-      // Tracking
+      // 1. Tracking
       await supabase.from('analytics').insert([{ event_type: 'order', page_path: '/checkout' }]);
 
-      // Sauvegarde de la commande avec note client
-      const { error } = await supabase.from('orders').insert([{
-        user_email:    email,
-        full_name:     fullName,
-        address,
-        city,
-        postal_code:   postalCode,
-        items:         items,
-        total_price:   totalPrice() + 5,
-        customer_note: customerNote || null,
-        status:        'pending',
-      }]);
+      // 2. Sauvegarde de la commande dans Supabase
+      const { data: orderData, error: orderError } = await supabase
+        .from('orders')
+        .insert([{
+          user_email:    email,
+          full_name:     fullName,
+          address,
+          city,
+          postal_code:   postalCode,
+          items,
+          total_price:   totalPrice() + 5,
+          customer_note: customerNote || null,
+          status:        'pending',
+        }])
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (orderError) throw orderError;
 
-      // Paiement Stripe (réactivation prévue — en pause)
-      // const res = await fetch('/api/checkout', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ items }),
-      // });
-      // const data = await res.json();
-      // if (data.url) window.location.href = data.url;
+      // 3. Création de la session Stripe Checkout
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items,
+          orderId:       orderData.id,
+          customerNote:  customerNote || '',
+        }),
+      });
 
-      toast.success('Commande enregistrée ! Nous vous contacterons très vite. ✨');
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || 'Erreur Stripe');
+
+      // 4. Redirection vers Stripe (vide le panier au retour via /success)
       clearCart();
-    } catch (error) {
+      window.location.href = data.url;
+
+    } catch (error: any) {
       console.error(error);
-      toast.error('Une erreur est survenue. Veuillez réessayer.');
+      toast.error(error.message || 'Une erreur est survenue. Veuillez réessayer.');
     } finally {
       setIsLoading(false);
     }
@@ -92,30 +104,31 @@ export default function CheckoutPage() {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 gap-12">
-            {/* Formulaire de livraison */}
+
+            {/* ── Formulaire de livraison ── */}
             <div className="bg-white/40 backdrop-blur-md p-8 rounded-[2rem] border border-white/50 shadow-sm space-y-6">
               <h2 className="text-2xl font-serif italic text-stone-800">Mes coordonnées</h2>
-              
+
               <div className="space-y-4">
                 <input
                   type="text"
                   placeholder="Nom complet *"
                   value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
+                  onChange={e => setFullName(e.target.value)}
                   className="w-full p-4 rounded-xl border border-stone-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-amber-300"
                 />
                 <input
                   type="email"
                   placeholder="Adresse email *"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={e => setEmail(e.target.value)}
                   className="w-full p-4 rounded-xl border border-stone-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-amber-300"
                 />
                 <input
                   type="text"
                   placeholder="Adresse de livraison *"
                   value={address}
-                  onChange={(e) => setAddress(e.target.value)}
+                  onChange={e => setAddress(e.target.value)}
                   className="w-full p-4 rounded-xl border border-stone-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-amber-300"
                 />
                 <div className="grid grid-cols-2 gap-4">
@@ -123,14 +136,14 @@ export default function CheckoutPage() {
                     type="text"
                     placeholder="NPA"
                     value={postalCode}
-                    onChange={(e) => setPostalCode(e.target.value)}
+                    onChange={e => setPostalCode(e.target.value)}
                     className="w-full p-4 rounded-xl border border-stone-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-amber-300"
                   />
                   <input
                     type="text"
                     placeholder="Ville *"
                     value={city}
-                    onChange={(e) => setCity(e.target.value)}
+                    onChange={e => setCity(e.target.value)}
                     className="w-full p-4 rounded-xl border border-stone-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-amber-300"
                   />
                 </div>
@@ -143,7 +156,7 @@ export default function CheckoutPage() {
                   <textarea
                     placeholder="ex : merci de modifier la couleur, d'ajouter un message personnalisé…"
                     value={customerNote}
-                    onChange={(e) => setCustomerNote(e.target.value)}
+                    onChange={e => setCustomerNote(e.target.value)}
                     rows={3}
                     className="w-full p-4 rounded-xl border border-stone-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-amber-300 resize-none text-sm font-light"
                   />
@@ -151,14 +164,14 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Récapitulatif de commande */}
+            {/* ── Récapitulatif ── */}
             <div className="bg-stone-900 text-stone-100 p-8 rounded-[2rem] shadow-2xl flex flex-col">
               <h2 className="text-2xl font-serif italic text-amber-200 mb-8">Récapitulatif</h2>
-              
+
               <div className="space-y-4 flex-1">
                 {items.map(item => (
                   <div key={item.id} className="flex justify-between items-center text-stone-300 font-light pb-4 border-b border-stone-800">
-                    <span>{item.quantity}x {item.title}</span>
+                    <span>{item.quantity}× {item.title}</span>
                     <span>{item.price * item.quantity} CHF</span>
                   </div>
                 ))}
@@ -178,18 +191,19 @@ export default function CheckoutPage() {
                   <span className="text-2xl font-serif text-amber-400">{totalPrice() + 5} CHF</span>
                 </div>
 
-                <button 
+                <button
                   onClick={handleCheckout}
                   disabled={isLoading}
                   className="w-full py-4 bg-amber-200 text-stone-900 rounded-full text-xs tracking-widest uppercase font-bold hover:bg-white transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isLoading ? "Redirection..." : "Procéder au paiement"}
+                  {isLoading ? 'Redirection…' : 'Procéder au paiement'}
                 </button>
                 <p className="text-center text-[10px] text-stone-500 mt-4 uppercase tracking-wider">
-                  Paiement sécurisé via Stripe 
+                  Paiement sécurisé via Stripe
                 </p>
               </div>
             </div>
+
           </div>
         )}
       </section>

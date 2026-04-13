@@ -2,16 +2,31 @@
 
 import MagicBackground from './components/MagicBackground';
 import AnimatedLogo from './components/AnimatedLogo';
-import PriceCard from './components/PriceCard';
 import GlassContacts from './components/GlassContacts';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from './components/Navbar';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
+import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [email, setEmail] = useState('');
+  const [products, setProducts] = useState<any[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+
+  useEffect(() => {
+    supabase
+      .from('products')
+      .select('id, title, price, images, image_url, description')
+      .eq('is_online', true)
+      .limit(4)
+      .then(({ data }) => {
+        if (data) setProducts(data);
+        setLoadingProducts(false);
+      });
+  }, []);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,13 +36,6 @@ export default function Home() {
       setEmail('');
     }
   };
-
-  const jewelryPrices = [
-    { title: "Bracelet simple", price: "12" },
-    { title: "Bracelet breloque & pierre", price: "18" },
-    { title: "Collier simple", price: "28" },
-    { title: "Collier prestige", price: "38" },
-  ];
 
   return (
     <main className="relative min-h-screen text-stone-900 selection:bg-purple-100 overflow-hidden">
@@ -80,18 +88,92 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* 4. Section Tarifs (Grid de cartes Cristal) */}
+      {/* 4. Section Créations — données Supabase */}
       <section className="py-24 px-6 max-w-7xl mx-auto z-10 relative">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-serif italic text-stone-800 mb-6">Les Créations</h2>
           <p className="text-amber-500 uppercase tracking-widest text-xs">Fait hand with love</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {jewelryPrices.map((item, index) => (
-            <PriceCard key={index} title={item.title} price={item.price} />
-          ))}
-        </div>
+        {loadingProducts ? (
+          <div className="flex justify-center py-16">
+            <div className="w-8 h-8 rounded-full border-4 border-amber-300 border-t-transparent animate-spin" />
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {products.map((product) => {
+                const thumb =
+                  (Array.isArray(product.images) && product.images[0]) ||
+                  product.image_url ||
+                  null;
+                return (
+                  <motion.div
+                    key={product.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    whileHover={{ y: -8 }}
+                    className="group bg-white/20 backdrop-blur-md border border-white/40 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden flex flex-col"
+                  >
+                    {/* Image */}
+                    <div className="relative w-full aspect-square bg-stone-100/50 overflow-hidden">
+                      {thumb ? (
+                        <img
+                          src={thumb}
+                          alt={product.title}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-stone-300">
+                          <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Infos */}
+                    <div className="p-6 flex flex-col flex-1 justify-between">
+                      <div>
+                        <h3 className="font-light uppercase tracking-widest text-sm text-stone-700 mb-1">
+                          {product.title}
+                        </h3>
+                        {product.description && (
+                          <p className="text-xs text-stone-500 font-light leading-relaxed line-clamp-2">
+                            {product.description}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-end justify-between mt-4 pt-4 border-t border-white/40">
+                        <span className="text-3xl font-serif text-stone-900 group-hover:text-amber-700 transition-colors">
+                          {product.price} <span className="text-lg">CHF</span>
+                        </span>
+                        <Link
+                          href="/boutique"
+                          className="text-xs uppercase tracking-widest text-amber-600 hover:text-amber-800 transition-colors font-medium"
+                        >
+                          Voir →
+                        </Link>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {products.length > 0 && (
+              <div className="text-center mt-12">
+                <Link
+                  href="/boutique"
+                  className="inline-block px-10 py-4 border border-amber-400/60 text-[#7A4E2D] rounded-full text-xs tracking-widest uppercase hover:bg-amber-50 transition-colors"
+                >
+                  Voir toutes les créations
+                </Link>
+              </div>
+            )}
+          </>
+        )}
       </section>
 
       {/* 5. Section Ateliers (Appel à l'action magique) */}

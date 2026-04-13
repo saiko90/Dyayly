@@ -11,7 +11,7 @@ export default function AnimatedLogo() {
   const scaleSunflower = useTransform(scrollYProgress, [0, 0.3], [1, 1.15]);
 
   return (
-    <div className="relative w-72 h-72 md:w-96 md:h-96 flex items-center justify-center">
+    <div className="relative w-[230px] h-[230px] md:w-[307px] md:h-[307px] flex items-center justify-center">
       
       {/* Halo de lumière */}
       <motion.div 

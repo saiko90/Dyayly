@@ -58,35 +58,23 @@ export default function CheckoutPage() {
     }
     setCheckingPromo(true);
     try {
-      const { supabase } = await import('@/lib/supabase');
+      const res = await fetch('/api/validate-promo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, email }),
+      });
 
-      // 1. Code existe et est actif ?
-      const { data: promoData } = await supabase
-        .from('promo_codes')
-        .select('*')
-        .eq('code', code)
-        .eq('is_active', true)
-        .single();
+      const data = await res.json();
 
-      if (!promoData) {
-        toast.error('Code promo invalide ou expiré.');
+      if (!res.ok) {
+        toast.error(data.error || 'Code promo invalide.');
         return;
       }
 
-      // 2. Déjà utilisé par cet email ?
-      const { data: usedOrders } = await supabase
-        .from('orders')
-        .select('id')
-        .eq('user_email', email)
-        .eq('promo_code', code);
-
-      if (usedOrders && usedOrders.length > 0) {
-        toast.error('Ce code a déjà été utilisé avec cet email.');
-        return;
-      }
-
-      setAppliedPromo({ code, percentage: promoData.percentage });
-      toast.success(`Code "${code}" appliqué — −${promoData.percentage}% ! ✨`);
+      setAppliedPromo({ code: data.code, percentage: data.percentage });
+      toast.success(`Code "${data.code}" appliqué — −${data.percentage}% ! ✨`);
+    } catch {
+      toast.error('Impossible de vérifier le code. Réessayez.');
     } finally {
       setCheckingPromo(false);
     }

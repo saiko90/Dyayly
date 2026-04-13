@@ -11,6 +11,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Email manquant' }, { status: 400 });
     }
 
+    // ── Insertion dans la table subscribers ────────────────────────────
+    const { supabase } = await import('@/lib/supabase');
+    const { error: dbError } = await supabase
+      .from('subscribers')
+      .insert([{ email }]);
+
+    if (dbError) {
+      // Code 23505 = violation de contrainte UNIQUE (email déjà enregistré)
+      if (dbError.code === '23505') {
+        return NextResponse.json({ error: 'already_subscribed' }, { status: 409 });
+      }
+      // Autre erreur DB — on laisse passer et on envoie quand même l'email
+      console.error('Supabase subscribers insert error:', dbError.message);
+    }
+
     const html = `
       <!DOCTYPE html>
       <html lang="fr">

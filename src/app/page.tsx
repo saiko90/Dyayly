@@ -32,17 +32,34 @@ export default function Home() {
     e.preventDefault();
     if (!email) return;
     try {
-      await fetch('/api/welcome-email', {
+      const res = await fetch('/api/welcome-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
+
+      if (res.status === 409) {
+        toast('Vous êtes déjà inscrit(e) à notre newsletter ! ✨', {
+          icon: '💌',
+          style: { background: '#FDF3E8', color: '#7A4E2D', border: '1px solid #C4956A' },
+        });
+        return; // Ne pas fermer le modal ni vider le champ
+      }
+
+      if (!res.ok) {
+        toast.error('Une erreur est survenue. Réessayez dans un instant.');
+        return;
+      }
+
+      toast.success('Inscrit(e) avec succès ! Votre code BIENVENUE15 vous a été envoyé par email.', {
+        icon: '✨',
+        duration: 5000,
+      });
+      setIsModalOpen(false);
+      setEmail('');
     } catch {
-      // L'envoi d'email ne doit pas bloquer l'UX
+      toast.error('Une erreur est survenue. Réessayez dans un instant.');
     }
-    toast.success('Inscrit(e) avec succès ! Votre code BIENVENUE15 vous a été envoyé par email. ✨', { icon: '✨', duration: 5000 });
-    setIsModalOpen(false);
-    setEmail('');
   };
 
   return (

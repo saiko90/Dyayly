@@ -88,52 +88,30 @@ export default function CheckoutPage() {
     }
     setIsLoading(true);
     try {
-      const { supabase } = await import('@/lib/supabase');
-
-      // Tracking
-      await supabase.from('analytics').insert([{ event_type: 'order', page_path: '/checkout' }]);
-
-      // Sauvegarde commande Supabase
-      const { data: orderData, error: orderError } = await supabase
-        .from('orders')
-        .insert([{
-          user_email:      email,
-          full_name:       fullName,
-          address,
-          city,
-          postal_code:     postalCode,
-          country,
-          items,
-          total_price:     finalTotal,
-          shipping_cost:   shippingCost,
-          discount_amount: discountAmount,
-          promo_code:      appliedPromo?.code || null,
-          customer_note:   customerNote || null,
-          status:          'pending',
-        }])
-        .select()
-        .single();
-
-      if (orderError) throw orderError;
-
-      // Création session Stripe
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items,
-          orderId:           orderData.id,
-          customerEmail:     email,
-          customerNote:      customerNote || '',
-          shippingCost,
+          // Données de commande (insertion Supabase côté serveur)
+          userEmail:       email,
+          fullName,
+          address,
+          city,
+          postalCode,
           country,
-          promoCode:         appliedPromo?.code        || null,
-          promoPercentage:   appliedPromo?.percentage  || null,
+          items,
+          totalPrice:      finalTotal,
+          shippingCost,
+          discountAmount,
+          promoCode:       appliedPromo?.code        || null,
+          customerNote:    customerNote              || null,
+          // Paramètres Stripe
+          promoPercentage: appliedPromo?.percentage  || null,
         }),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Erreur Stripe');
+      if (!res.ok) throw new Error(data.error || 'Erreur lors de la commande');
 
       clearCart();
       window.location.href = data.url;

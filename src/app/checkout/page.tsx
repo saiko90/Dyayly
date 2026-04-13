@@ -135,6 +135,7 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           items,
           orderId:           orderData.id,
+          customerEmail:     email,
           customerNote:      customerNote || '',
           shippingCost,
           country,
@@ -183,13 +184,21 @@ export default function CheckoutPage() {
 
             {/* ── Formulaire ── */}
             <div className="bg-white/40 backdrop-blur-md p-8 rounded-[2rem] border border-white/50 shadow-sm space-y-5">
+
+              {/* Section Contact */}
+              <div>
+                <h2 className="text-2xl font-serif italic text-stone-800 mb-4">Contact</h2>
+                <input type="email" placeholder="Adresse email *" value={email}
+                  onChange={e => setEmail(e.target.value)} className={inputCls} />
+                <p className="text-[11px] text-stone-400 mt-1.5 font-light">
+                  Nécessaire pour confirmer votre commande et valider un code promo.
+                </p>
+              </div>
+
               <h2 className="text-2xl font-serif italic text-stone-800">Mes coordonnées</h2>
 
               <input type="text" placeholder="Nom complet *" value={fullName}
                 onChange={e => setFullName(e.target.value)} className={inputCls} />
-
-              <input type="email" placeholder="Adresse email *" value={email}
-                onChange={e => setEmail(e.target.value)} className={inputCls} />
 
               <input type="text" placeholder="Adresse de livraison *" value={address}
                 onChange={e => setAddress(e.target.value)} className={inputCls} />
@@ -278,9 +287,16 @@ export default function CheckoutPage() {
 
               <div className="space-y-3 flex-1">
                 {items.map(item => (
-                  <div key={item.id} className="flex justify-between items-center text-stone-300 font-light pb-3 border-b border-stone-800">
-                    <span>{item.quantity}× {item.title}</span>
-                    <span>{(item.price * item.quantity).toFixed(2)} CHF</span>
+                  <div key={item.id} className="pb-3 border-b border-stone-800">
+                    <div className="flex justify-between items-start text-stone-300 font-light">
+                      <span>{item.quantity}× {item.title}</span>
+                      <span className="ml-4 shrink-0">{(item.price * item.quantity).toFixed(2)} CHF</span>
+                    </div>
+                    {item.selectedVariants && Object.keys(item.selectedVariants).length > 0 && (
+                      <p className="text-[10px] text-stone-500 mt-0.5">
+                        {Object.entries(item.selectedVariants).map(([k, v]) => `${k}: ${v}`).join(' · ')}
+                      </p>
+                    )}
                   </div>
                 ))}
               </div>

@@ -2,10 +2,13 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export interface CartItem {
-  id: string;
+  id: string;                                   // clé composite: productId ou productId::variantSig
+  productId: string;                            // id Supabase du produit
   title: string;
   price: number;
   quantity: number;
+  image?: string;
+  selectedVariants?: Record<string, string>;    // ex: { Couleur: 'Rouge', Taille: 'M' }
 }
 
 interface CartState {

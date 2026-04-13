@@ -7,7 +7,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(req: Request) {
   try {
-    const { items, orderId, customerNote, shippingCost, country, promoCode, promoPercentage } = await req.json();
+    const { items, orderId, customerEmail, customerNote, shippingCost, country, promoCode, promoPercentage } = await req.json();
 
     if (!items || items.length === 0) {
       return NextResponse.json({ error: 'Panier vide' }, { status: 400 });
@@ -18,7 +18,11 @@ export async function POST(req: Request) {
         currency: 'chf',
         product_data: {
           name: item.title,
-          ...(item.variantLabel ? { description: `${item.variantLabel} : ${item.variantValue}` } : {}),
+          ...(item.selectedVariants && Object.keys(item.selectedVariants).length > 0
+            ? { description: Object.entries(item.selectedVariants).map(([k, v]) => `${k}: ${v}`).join(' · ') }
+            : item.variantLabel
+              ? { description: `${item.variantLabel}: ${item.variantValue}` }
+              : {}),
         },
         unit_amount: Math.round(item.price * 100),
       },
@@ -56,6 +60,7 @@ export async function POST(req: Request) {
       payment_method_types: ['card', 'twint'],
       line_items: lineItems,
       mode: 'payment',
+      ...(customerEmail ? { customer_email: customerEmail } : {}),
       ...(discounts.length > 0 ? { discounts } : {}),
       success_url: `${siteUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  `${siteUrl}/checkout`,

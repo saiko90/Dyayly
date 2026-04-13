@@ -54,9 +54,20 @@ export default function CartDrawer() {
               ) : (
                 items.map((item) => (
                   <div key={item.id} className="flex gap-4 items-center bg-white p-4 rounded-2xl shadow-sm border border-stone-100">
-                    <div className="flex-1">
-                      <h3 className="font-serif italic text-lg text-stone-800">{item.title}</h3>
-                      <p className="text-amber-700 font-medium">{item.price} CHF</p>
+                    {/* Miniature */}
+                    {item.image && (
+                      <div className="w-14 h-14 rounded-xl overflow-hidden bg-stone-100 shrink-0">
+                        <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-serif italic text-base text-stone-800 leading-tight">{item.title}</h3>
+                      {item.selectedVariants && Object.keys(item.selectedVariants).length > 0 && (
+                        <p className="text-[10px] text-stone-400 mt-0.5 truncate">
+                          {Object.entries(item.selectedVariants).map(([k, v]) => `${k}: ${v}`).join(' · ')}
+                        </p>
+                      )}
+                      <p className="text-amber-700 font-medium text-sm mt-0.5">{item.price.toFixed(2)} CHF</p>
                     </div>
 
                     <div className="flex items-center gap-3 bg-stone-100 text-stone-800 rounded-full px-3 py-1.5 border border-stone-200 shadow-sm">

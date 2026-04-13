@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Package, Users, BarChart3, Mail,
-  Settings, Plus, Trash2, Edit3, Image as ImageIcon, Send, X, Upload,
+  Settings, Plus, Trash2, Edit3, Image as ImageIcon, Send, X, Upload, Tag,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { supabase } from '@/lib/supabase';
@@ -36,6 +36,12 @@ export default function AdminDashboard() {
   const [variants, setVariants] = useState<Variant[]>([]);
   const [hasVariants, setHasVariants] = useState(false);
   const [savingProduct, setSavingProduct] = useState(false);
+
+  // ── Promotions ─────────────────────────────────────────────
+  const [promoCodes, setPromoCodes]       = useState<any[]>([]);
+  const [promoFormCode, setPromoFormCode] = useState('');
+  const [promoFormPct, setPromoFormPct]   = useState('');
+  const [savingPromo, setSavingPromo]     = useState(false);
 
   // ── Newsletter ─────────────────────────────────────────────
   const [nlSubject, setNlSubject] = useState('');
@@ -84,6 +90,7 @@ export default function AdminDashboard() {
       fetchProducts();
       fetchClients();
       fetchAnalytics();
+      fetchPromoCodes();
     } else {
       toast.error('Mot de passe incorrect', { icon: '❌' });
     }
@@ -219,6 +226,47 @@ export default function AdminDashboard() {
   const updateVariant = (idx: number, field: keyof Variant, val: string | number) =>
     setVariants(prev => prev.map((v, i) => i === idx ? { ...v, [field]: val } : v));
 
+  // ── Promotions ─────────────────────────────────────────────
+  const fetchPromoCodes = async () => {
+    const { data } = await supabase
+      .from('promo_codes')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (data) setPromoCodes(data);
+  };
+
+  const handleAddPromo = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const code = promoFormCode.toUpperCase().trim();
+    const pct  = parseInt(promoFormPct);
+    if (!code || isNaN(pct) || pct <= 0 || pct > 100) {
+      toast.error('Code invalide ou pourcentage hors limites (1–100).');
+      return;
+    }
+    setSavingPromo(true);
+    const { error } = await supabase.from('promo_codes').insert([{ code, percentage: pct }]);
+    if (error) toast.error(error.message);
+    else {
+      toast.success(`Code "${code}" créé !`);
+      setPromoFormCode('');
+      setPromoFormPct('');
+      fetchPromoCodes();
+    }
+    setSavingPromo(false);
+  };
+
+  const handleDeletePromo = async (id: string, code: string) => {
+    if (!window.confirm(`Supprimer le code "${code}" ?`)) return;
+    await supabase.from('promo_codes').delete().eq('id', id);
+    toast.success('Code supprimé.');
+    fetchPromoCodes();
+  };
+
+  const handleTogglePromo = async (id: string, current: boolean) => {
+    await supabase.from('promo_codes').update({ is_active: !current }).eq('id', id);
+    fetchPromoCodes();
+  };
+
   // ── Newsletter ─────────────────────────────────────────────
   const handleNlImageUpload = async (file: File) => {
     setUploadingNlImage(true);
@@ -301,6 +349,7 @@ export default function AdminDashboard() {
     { id: 'clients',     icon: Users,           label: 'Clients & Emails' },
     { id: 'stats',       icon: BarChart3,       label: 'Statistiques' },
     { id: 'newsletter',  icon: Mail,            label: 'Newsletter' },
+    { id: 'promos',      icon: Tag,             label: 'Promotions' },
   ];
 
   return (
@@ -861,6 +910,119 @@ export default function AdminDashboard() {
                         <td className="p-4 text-stone-600">{new Date(client.created_at).toLocaleDateString()}</td>
                         <td className="p-4">
                           <span className="px-3 py-1 text-xs rounded-full bg-purple-100 text-purple-700">Inscrit</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ── PROMOTIONS ── */}
+          {activeTab === 'promos' && (
+            <motion.div
+              key="promos"
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+              className="space-y-8 max-w-3xl"
+            >
+              <div>
+                <h2 className="text-3xl font-serif italic text-stone-900 mb-2">Codes Promotionnels</h2>
+                <p className="text-stone-500 font-light">Créez et gérez vos codes de réduction.</p>
+              </div>
+
+              {/* Formulaire ajout */}
+              <form
+                onSubmit={handleAddPromo}
+                className="bg-white p-6 rounded-3xl shadow-sm border border-stone-200"
+              >
+                <h3 className="text-lg font-serif italic text-stone-800 mb-4">Nouveau code promo</h3>
+                <div className="flex gap-3 items-end">
+                  <div className="flex-1">
+                    <label className="block text-xs uppercase tracking-widest text-stone-500 mb-2">Code</label>
+                    <input
+                      required
+                      type="text"
+                      placeholder="ex : ETE2026"
+                      value={promoFormCode}
+                      onChange={e => setPromoFormCode(e.target.value.toUpperCase())}
+                      className="w-full p-3 border border-stone-200 rounded-xl bg-stone-50 focus:outline-none focus:ring-2 focus:ring-amber-300 font-mono uppercase"
+                    />
+                  </div>
+                  <div className="w-32">
+                    <label className="block text-xs uppercase tracking-widest text-stone-500 mb-2">Réduction %</label>
+                    <input
+                      required
+                      type="number"
+                      min="1" max="100"
+                      placeholder="15"
+                      value={promoFormPct}
+                      onChange={e => setPromoFormPct(e.target.value)}
+                      className="w-full p-3 border border-stone-200 rounded-xl bg-stone-50 focus:outline-none focus:ring-2 focus:ring-amber-300"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={savingPromo}
+                    className="flex items-center gap-2 bg-stone-900 text-amber-100 px-5 py-3 rounded-xl hover:bg-stone-800 transition text-sm font-medium disabled:opacity-50"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Créer
+                  </button>
+                </div>
+              </form>
+
+              {/* Liste des codes */}
+              <div className="bg-white rounded-3xl shadow-sm border border-stone-200 overflow-hidden">
+                <table className="w-full text-left">
+                  <thead className="bg-stone-50 border-b border-stone-200 text-stone-500 text-xs uppercase tracking-wider">
+                    <tr>
+                      <th className="p-4 pl-6 font-medium">Code</th>
+                      <th className="p-4 font-medium">Réduction</th>
+                      <th className="p-4 font-medium">Statut</th>
+                      <th className="p-4 font-medium">Créé le</th>
+                      <th className="p-4 text-right pr-6 font-medium">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-stone-100">
+                    {promoCodes.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="p-6 text-center text-stone-400 font-light">
+                          Aucun code promo créé
+                        </td>
+                      </tr>
+                    ) : promoCodes.map(promo => (
+                      <tr key={promo.id} className="hover:bg-stone-50 transition-colors">
+                        <td className="p-4 pl-6">
+                          <span className="font-mono font-bold text-stone-800 bg-amber-50 px-3 py-1 rounded-lg text-sm border border-amber-200">
+                            {promo.code}
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          <span className="text-lg font-serif text-amber-700">−{promo.percentage}%</span>
+                        </td>
+                        <td className="p-4">
+                          <button
+                            onClick={() => handleTogglePromo(promo.id, promo.is_active)}
+                            className={`px-3 py-1 rounded-full text-xs font-medium transition ${
+                              promo.is_active
+                                ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                                : 'bg-stone-100 text-stone-500 hover:bg-stone-200'
+                            }`}
+                          >
+                            {promo.is_active ? 'Actif' : 'Inactif'}
+                          </button>
+                        </td>
+                        <td className="p-4 text-stone-500 text-sm">
+                          {new Date(promo.created_at).toLocaleDateString('fr-FR')}
+                        </td>
+                        <td className="p-4 pr-6 text-right">
+                          <button
+                            onClick={() => handleDeletePromo(promo.id, promo.code)}
+                            className="p-2 text-stone-400 hover:text-red-500 bg-white rounded-lg border border-stone-200 shadow-sm transition"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
                         </td>
                       </tr>
                     ))}

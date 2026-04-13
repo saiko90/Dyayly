@@ -28,23 +28,34 @@ export default function Home() {
       });
   }, []);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      toast.success('Inscrit avec succès ! Vous serez averti(e) des prochains ateliers.', { icon: '✨' });
-      setIsModalOpen(false);
-      setEmail('');
+    if (!email) return;
+    try {
+      await fetch('/api/welcome-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+    } catch {
+      // L'envoi d'email ne doit pas bloquer l'UX
     }
+    toast.success('Inscrit(e) avec succès ! Votre code BIENVENUE15 vous a été envoyé par email. ✨', { icon: '✨', duration: 5000 });
+    setIsModalOpen(false);
+    setEmail('');
   };
 
   return (
     <main className="relative min-h-screen text-stone-900 selection:bg-purple-100 overflow-hidden">
-      {/* TOP BAR — Slogan */}
-      <div className="fixed top-0 inset-x-0 z-[60] flex items-center justify-center py-1.5 bg-[#FDFBF7]/80 backdrop-blur-sm border-b border-amber-200/40">
-        <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase font-light text-[#8B5E3C]">
-          Créativité&nbsp;•&nbsp;Éveil&nbsp;•&nbsp;Positivité
+      {/* TOP BAR — Bannière newsletter */}
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="fixed top-0 inset-x-0 z-[60] flex items-center justify-center py-1.5 bg-[#5C3D1E] backdrop-blur-sm border-b border-amber-900/30 hover:bg-[#7A4E2D] transition-colors w-full cursor-pointer"
+      >
+        <p className="text-[10px] md:text-xs tracking-[0.25em] uppercase font-light text-amber-100">
+          ✨&nbsp;−15% sur votre première commande en vous inscrivant à la newsletter&nbsp;✨
         </p>
-      </div>
+      </button>
 
       <Navbar />
       

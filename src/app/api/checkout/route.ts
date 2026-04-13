@@ -104,7 +104,14 @@ export async function POST(req: Request) {
     }
 
     // ── 5. Session Stripe ──────────────────────────────────────────────
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    // Priorité : variable explicite → VERCEL_URL (auto-injecté par Vercel) → header host → localhost
+    const siteUrl = (() => {
+      if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
+      if (process.env.VERCEL_URL)           return `https://${process.env.VERCEL_URL}`;
+      const host = req.headers.get('host');
+      if (host) return host.startsWith('localhost') ? `http://${host}` : `https://${host}`;
+      return 'http://localhost:3000';
+    })();
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card', 'twint'],

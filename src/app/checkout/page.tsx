@@ -6,34 +6,65 @@ import Navbar from '../components/Navbar';
 import MagicBackground from '../components/MagicBackground';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 
 export default function CheckoutPage() {
-  const { items, totalPrice } = useCartStore();
+  const { items, totalPrice, clearCart } = useCartStore();
   const [mounted, setMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Champs du formulaire
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [city, setCity] = useState('');
+  const [customerNote, setCustomerNote] = useState('');
 
   useEffect(() => setMounted(true), []);
 
   const handleCheckout = async () => {
+    if (!fullName || !email || !address || !city) {
+      toast.error('Merci de remplir tous les champs obligatoires.');
+      return;
+    }
+
     try {
       setIsLoading(true);
-      
-      // Tracking
       const { supabase } = await import('@/lib/supabase');
+
+      // Tracking
       await supabase.from('analytics').insert([{ event_type: 'order', page_path: '/checkout' }]);
 
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items }),
-      });
-      
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      }
+      // Sauvegarde de la commande avec note client
+      const { error } = await supabase.from('orders').insert([{
+        user_email:    email,
+        full_name:     fullName,
+        address,
+        city,
+        postal_code:   postalCode,
+        items:         items,
+        total_price:   totalPrice() + 5,
+        customer_note: customerNote || null,
+        status:        'pending',
+      }]);
+
+      if (error) throw error;
+
+      // Paiement Stripe (réactivation prévue — en pause)
+      // const res = await fetch('/api/checkout', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ items }),
+      // });
+      // const data = await res.json();
+      // if (data.url) window.location.href = data.url;
+
+      toast.success('Commande enregistrée ! Nous vous contacterons très vite. ✨');
+      clearCart();
     } catch (error) {
       console.error(error);
+      toast.error('Une erreur est survenue. Veuillez réessayer.');
     } finally {
       setIsLoading(false);
     }
@@ -66,12 +97,56 @@ export default function CheckoutPage() {
               <h2 className="text-2xl font-serif italic text-stone-800">Mes coordonnées</h2>
               
               <div className="space-y-4">
-                <input type="text" placeholder="Nom complet" className="w-full p-4 rounded-xl border border-stone-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-amber-300" />
-                <input type="email" placeholder="Adresse email" className="w-full p-4 rounded-xl border border-stone-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-amber-300" />
-                <input type="text" placeholder="Adresse de livraison" className="w-full p-4 rounded-xl border border-stone-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-amber-300" />
+                <input
+                  type="text"
+                  placeholder="Nom complet *"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="w-full p-4 rounded-xl border border-stone-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-amber-300"
+                />
+                <input
+                  type="email"
+                  placeholder="Adresse email *"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full p-4 rounded-xl border border-stone-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-amber-300"
+                />
+                <input
+                  type="text"
+                  placeholder="Adresse de livraison *"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  className="w-full p-4 rounded-xl border border-stone-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-amber-300"
+                />
                 <div className="grid grid-cols-2 gap-4">
-                  <input type="text" placeholder="NPA" className="w-full p-4 rounded-xl border border-stone-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-amber-300" />
-                  <input type="text" placeholder="Ville" className="w-full p-4 rounded-xl border border-stone-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-amber-300" />
+                  <input
+                    type="text"
+                    placeholder="NPA"
+                    value={postalCode}
+                    onChange={(e) => setPostalCode(e.target.value)}
+                    className="w-full p-4 rounded-xl border border-stone-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-amber-300"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Ville *"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    className="w-full p-4 rounded-xl border border-stone-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-amber-300"
+                  />
+                </div>
+
+                {/* Commentaire client */}
+                <div>
+                  <label className="block text-xs uppercase tracking-widest text-[#8B5E3C] mb-2 font-light">
+                    Commentaire pour la commande
+                  </label>
+                  <textarea
+                    placeholder="ex : merci de modifier la couleur, d'ajouter un message personnalisé…"
+                    value={customerNote}
+                    onChange={(e) => setCustomerNote(e.target.value)}
+                    rows={3}
+                    className="w-full p-4 rounded-xl border border-stone-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-amber-300 resize-none text-sm font-light"
+                  />
                 </div>
               </div>
             </div>

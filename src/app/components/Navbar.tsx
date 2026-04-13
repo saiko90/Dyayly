@@ -29,7 +29,7 @@ export default function Navbar() {
     { name: 'Accueil', path: '/' },
     { name: 'Histoire', path: '/histoire' },
     { name: 'Boutique', path: '/boutique' },
-    { name: 'Ateliers', path: '/ateliers' },
+    // { name: 'Ateliers', path: '/ateliers' }, // temporairement masqué
   ];
 
   return (
@@ -57,7 +57,7 @@ export default function Navbar() {
             <Link href="/">Dyayly</Link>
           </li>
           <li className="hover:text-amber-600 transition-colors"><Link href="/boutique">Boutique</Link></li>
-          <li className="hover:text-amber-600 transition-colors"><Link href="/ateliers">Ateliers</Link></li>
+          {/* <li className="hover:text-amber-600 transition-colors"><Link href="/ateliers">Ateliers</Link></li> */}
         </ul>
 
         <div className="flex items-center gap-4 md:gap-6">

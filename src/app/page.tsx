@@ -31,6 +31,13 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen text-stone-900 selection:bg-purple-100 overflow-hidden">
+      {/* TOP BAR — Slogan */}
+      <div className="fixed top-0 inset-x-0 z-[60] flex items-center justify-center py-1.5 bg-[#FDFBF7]/80 backdrop-blur-sm border-b border-amber-200/40">
+        <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase font-light text-[#8B5E3C]">
+          Créativité&nbsp;•&nbsp;Éveil&nbsp;•&nbsp;Positivité
+        </p>
+      </div>
+
       <Navbar />
       
       {/* 1. L'univers magique unifié (Fond profond & Étoiles) */}
@@ -46,11 +53,11 @@ export default function Home() {
           transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
           className="text-center mt-12 z-20"
         >
-          <h1 className="text-7xl md:text-8xl font-serif mb-6 tracking-tighter italic text-[#C4956A] leading-none drop-shadow-sm">
-            DYAYLY
-          </h1>
-          <p className="text-sm md:text-base font-light uppercase tracking-widest text-amber-800/90 mb-12">
+          <p className="text-sm md:text-base font-light uppercase tracking-widest text-[#8B5E3C] mb-6">
             L'amour tissé en bijoux
+          </p>
+          <p className="text-sm md:text-base font-light text-[#7A4E2D] max-w-md mx-auto leading-relaxed mb-12">
+            DYAYLY c'est des bijoux et un univers créé pour aider chacune à reprendre la clé de sa propre énergie ✨
           </p>
           {/* Ligne magique or */}
           <div className="h-px w-32 bg-amber-400 mx-auto rounded-full" />

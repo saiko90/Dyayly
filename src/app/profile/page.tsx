@@ -7,11 +7,16 @@ import MagicBackground from '../components/MagicBackground';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import Link from 'next/link';
+
+const ADMIN_EMAIL = 'contact@dyayly.ch';
 
 export default function ProfilePage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+
+  const isAdmin = user?.email === ADMIN_EMAIL;
 
   useEffect(() => {
     const checkUser = async () => {
@@ -61,8 +66,20 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div className="mt-12 text-center">
-          <button 
+        {isAdmin && (
+          <div className="mt-8">
+            <Link
+              href="/admin"
+              className="flex items-center justify-center gap-3 w-full py-4 bg-[#5C3D1E] text-amber-100 rounded-2xl text-xs tracking-widest uppercase font-medium hover:bg-[#7A4E2D] transition shadow-lg"
+            >
+              <span>⚙</span>
+              Accéder au Dashboard
+            </Link>
+          </div>
+        )}
+
+        <div className="mt-6 text-center">
+          <button
             onClick={handleLogout}
             className="px-8 py-3 bg-stone-200 text-stone-700 hover:bg-stone-300 rounded-full text-xs tracking-widest uppercase font-medium transition"
           >

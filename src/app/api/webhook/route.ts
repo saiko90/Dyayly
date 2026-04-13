@@ -35,7 +35,11 @@ export async function POST(req: Request) {
     }
 
     try {
-      const { supabase } = await import('@/lib/supabase');
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      );
 
       // 1. Récupérer la commande complète
       const { data: order, error: fetchError } = await supabase

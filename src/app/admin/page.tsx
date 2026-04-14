@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Package, Users, BarChart3, Mail,
-  Settings, Plus, Trash2, Edit3, Image as ImageIcon, Send, X, Upload, Tag, ShoppingBag, Menu,
+  Settings, Plus, Trash2, Edit3, Image as ImageIcon, Send, X, Upload, Tag, ShoppingBag, Menu, FileText,
 } from 'lucide-react';
 import OrderCard from './OrderCard';
 import toast from 'react-hot-toast';
@@ -52,6 +52,13 @@ export default function AdminDashboard() {
   const [uploadingNlImage, setUploadingNlImage] = useState(false);
   const [sendingNewsletter, setSendingNewsletter] = useState(false);
 
+  // ── Contenu du site ────────────────────────────────────────
+  const [contentTitle,     setContentTitle]     = useState('');
+  const [contentIntro,     setContentIntro]     = useState('');
+  const [contentCard,      setContentCard]      = useState('');
+  const [loadingContent,   setLoadingContent]   = useState(false);
+  const [savingContent,    setSavingContent]    = useState(false);
+
   // ── Commandes ──────────────────────────────────────────────
   const [orders,        setOrders]        = useState<any[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
@@ -91,9 +98,46 @@ export default function AdminDashboard() {
     if (!error && data) setAnalytics(data);
   };
 
+  // ── Contenu — chargement et sauvegarde ────────────────────
+  const fetchContent = async () => {
+    setLoadingContent(true);
+    try {
+      const res = await fetch('/api/admin/content');
+      if (res.ok) {
+        const data = await res.json();
+        setContentTitle(data.title ?? '');
+        setContentIntro(data.intro_text ?? '');
+        setContentCard(data.card_text ?? '');
+      }
+    } catch {
+      toast.error('Impossible de charger le contenu.');
+    } finally {
+      setLoadingContent(false);
+    }
+  };
+
+  const handleSaveContent = async (e: { preventDefault(): void }) => {
+    e.preventDefault();
+    setSavingContent(true);
+    try {
+      const res = await fetch('/api/admin/content', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: contentTitle, intro_text: contentIntro, card_text: contentCard }),
+      });
+      if (!res.ok) throw new Error((await res.json()).error);
+      toast.success('Contenu mis à jour ! ✨');
+    } catch (err: any) {
+      toast.error(err.message || 'Erreur lors de la sauvegarde.');
+    } finally {
+      setSavingContent(false);
+    }
+  };
+
   // ── Commandes — chargement à l'activation de l'onglet ─────
   useEffect(() => {
     if (activeTab === 'commandes') fetchOrders();
+    if (activeTab === 'contenu')   fetchContent();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
@@ -380,6 +424,7 @@ export default function AdminDashboard() {
     { id: 'stats',       icon: BarChart3,       label: 'Statistiques' },
     { id: 'newsletter',  icon: Mail,            label: 'Newsletter' },
     { id: 'promos',      icon: Tag,             label: 'Promotions' },
+    { id: 'contenu',     icon: FileText,        label: 'Contenu du site' },
   ];
 
   return (
@@ -1128,6 +1173,85 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
               </div>
+            </motion.div>
+          )}
+
+          {/* ── CONTENU DU SITE ── */}
+          {activeTab === 'contenu' && (
+            <motion.div
+              key="contenu"
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+              className="space-y-8 max-w-3xl"
+            >
+              <div>
+                <h2 className="text-3xl font-serif italic text-stone-900 mb-2">Contenu du site</h2>
+                <p className="text-stone-500 font-light">Modifiez les textes de la page "Histoire" visibles par vos visiteurs.</p>
+              </div>
+
+              {loadingContent ? (
+                <div className="flex justify-center py-20">
+                  <div className="w-8 h-8 rounded-full border-4 border-purple-300 border-t-transparent animate-spin" />
+                </div>
+              ) : (
+                <form onSubmit={handleSaveContent} className="bg-white p-8 rounded-3xl shadow-sm border border-stone-200 space-y-6">
+
+                  <div>
+                    <label className="block text-xs uppercase tracking-widest text-stone-500 mb-2">
+                      Titre principal
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={contentTitle}
+                      onChange={e => setContentTitle(e.target.value)}
+                      placeholder="De l'ombre à la lumière"
+                      className="w-full p-4 rounded-xl border border-stone-200 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-purple-300 font-serif italic text-stone-800"
+                    />
+                    <p className="text-xs text-stone-400 mt-1.5">Le grand titre affiché en haut de la page.</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs uppercase tracking-widest text-stone-500 mb-2">
+                      Texte d'introduction
+                    </label>
+                    <textarea
+                      required
+                      rows={4}
+                      value={contentIntro}
+                      onChange={e => setContentIntro(e.target.value)}
+                      placeholder="DYAYLY est né d'un moment de vie…"
+                      className="w-full p-4 rounded-xl border border-stone-200 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-purple-300 resize-none text-sm"
+                    />
+                    <p className="text-xs text-stone-400 mt-1.5">Apparaît entre guillemets sous le titre.</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs uppercase tracking-widest text-stone-500 mb-2">
+                      Texte de la carte centrale
+                    </label>
+                    <textarea
+                      required
+                      rows={6}
+                      value={contentCard}
+                      onChange={e => setContentCard(e.target.value)}
+                      placeholder="L'amour tissé à travers les initiales de mes trois enfants…"
+                      className="w-full p-4 rounded-xl border border-stone-200 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-purple-300 resize-none text-sm"
+                    />
+                    <p className="text-xs text-stone-400 mt-1.5">Le texte principal de la carte en verre. Vous pouvez sauter des lignes pour créer des paragraphes.</p>
+                  </div>
+
+                  <div className="flex justify-end pt-2">
+                    <button
+                      type="submit"
+                      disabled={savingContent}
+                      className="flex items-center gap-2 bg-purple-200 text-stone-900 font-bold px-8 py-4 rounded-full hover:bg-purple-300 transition shadow-lg text-sm uppercase tracking-wider disabled:opacity-50"
+                    >
+                      <FileText className="w-4 h-4" />
+                      {savingContent ? 'Sauvegarde…' : 'Enregistrer les modifications'}
+                    </button>
+                  </div>
+                </form>
+              )}
             </motion.div>
           )}
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Pinyon_Script, Montserrat } from "next/font/google";
+import { Pinyon_Script, Montserrat, El_Messiri } from "next/font/google";
 import "./globals.css";
 import CartDrawer from "./components/cart/CartDrawer";
 import MagicCursor from "./components/MagicCursor";
@@ -20,6 +20,14 @@ const montserrat = Montserrat({
   subsets: ["latin"],
   weight: ["300", "400", "500"],
   variable: "--font-montserrat",
+  display: "swap",
+});
+
+// 3. Police orientale mystique — appliquée aux titres De l'ombre à la lumière
+const elMessiri = El_Messiri({
+  subsets: ["latin", "arabic"],
+  weight: ["400", "700"],
+  variable: "--font-el-messiri",
   display: "swap",
 });
 
@@ -57,7 +65,7 @@ export default function RootLayout({
   return (
     <html lang="fr" className="scroll-smooth">
       <body
-        className={`${pinyonScript.variable} ${montserrat.variable} font-sans bg-[#FDFBF7] text-[#8B5E3C] antialiased selection:bg-purple-200 selection:text-purple-900`}
+        className={`${pinyonScript.variable} ${montserrat.variable} ${elMessiri.variable} font-sans bg-[#FDFBF7] text-[#8B5E3C] antialiased selection:bg-purple-200 selection:text-purple-900`}
       >
         <CookieBanner />
         <Toaster

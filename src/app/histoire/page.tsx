@@ -34,13 +34,14 @@ export default function HistoirePage() {
           animate="show"
           variants={staggerContainer}
         >
-          <motion.span variants={fadeUp} className="text-purple-600/80 uppercase tracking-[0.4em] text-xs font-medium mb-6 block">
-            La Genèse
-          </motion.span>
-          <motion.h1 variants={fadeUp} className="text-5xl md:text-7xl font-serif italic mb-10 text-stone-800 leading-tight">
+          <motion.h1
+            variants={fadeUp}
+            className="text-5xl md:text-7xl mb-10 text-stone-800 leading-tight"
+            style={{ fontFamily: 'var(--font-el-messiri), serif' }}
+          >
             De l'ombre à la lumière
           </motion.h1>
-          <motion.div variants={fadeUp} className="h-px w-32 bg-amber-300 mx-auto mb-10" />
+          <motion.div variants={fadeUp} className="h-px w-32 bg-purple-300 mx-auto mb-10" />
           
           <motion.p variants={fadeUp} className="text-xl md:text-2xl font-light text-stone-600 leading-relaxed max-w-2xl mx-auto">
             "DYAYLY est né d’un moment de vie où la création est devenue un chemin de transformation, une façon de me révéler et d’oser me lancer."
@@ -71,7 +72,7 @@ export default function HistoirePage() {
             </p>
 
             <div className="pt-8">
-              <p className="text-base md:text-lg font-medium text-amber-700/80 uppercase tracking-widest">
+              <p className="text-base md:text-lg font-medium text-purple-600/80 uppercase tracking-widest">
                 C’est plus qu’un nom :
               </p>
               <p className="text-xl md:text-2xl font-serif italic text-stone-800 mt-2">
@@ -95,7 +96,7 @@ export default function HistoirePage() {
           </motion.p>
           
           <motion.div variants={fadeUp}>
-            <Link href="/boutique" className="inline-block px-10 py-4 bg-stone-900 text-amber-100 rounded-full text-xs tracking-[0.2em] uppercase font-medium hover:bg-stone-800 transition-colors shadow-xl hover:shadow-2xl hover:-translate-y-1 transform duration-300">
+            <Link href="/boutique" className="inline-block px-10 py-4 bg-stone-900 text-purple-100 rounded-full text-xs tracking-[0.2em] uppercase font-medium hover:bg-stone-800 transition-colors shadow-xl hover:shadow-2xl hover:-translate-y-1 transform duration-300">
               Découvrir les créations
             </Link>
           </motion.div>

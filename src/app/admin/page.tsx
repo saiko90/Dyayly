@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Package, Users, BarChart3, Mail,
-  Settings, Plus, Trash2, Edit3, Image as ImageIcon, Send, X, Upload, Tag, ShoppingBag,
+  Settings, Plus, Trash2, Edit3, Image as ImageIcon, Send, X, Upload, Tag, ShoppingBag, Menu,
 } from 'lucide-react';
 import OrderCard from './OrderCard';
 import toast from 'react-hot-toast';
@@ -23,6 +23,7 @@ export default function AdminDashboard() {
   const [analytics, setAnalytics] = useState<any[]>([]);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
 
   // ── Formulaire produit ─────────────────────────────────────
@@ -357,11 +358,11 @@ export default function AdminDashboard() {
               placeholder="Mot de passe administrateur"
               value={adminPassword}
               onChange={e => setAdminPassword(e.target.value)}
-              className="w-full p-4 rounded-xl border border-stone-600 bg-stone-800 text-stone-100 focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full p-4 rounded-xl border border-stone-600 bg-stone-800 text-stone-100 focus:outline-none focus:ring-2 focus:ring-purple-400"
             />
             <button
               type="submit"
-              className="w-full py-4 bg-amber-200 text-stone-900 font-medium tracking-widest uppercase text-sm rounded-xl hover:bg-amber-300 transition"
+              className="w-full py-4 bg-purple-200 text-stone-900 font-medium tracking-widest uppercase text-sm rounded-xl hover:bg-purple-300 transition"
             >
               Déverrouiller
             </button>
@@ -384,27 +385,43 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-stone-100 flex font-sans text-stone-800">
 
+      {/* ── Overlay mobile ── */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-stone-900/40 z-30 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* ── Sidebar ── */}
-      <aside className="w-64 bg-white border-r border-stone-200 flex flex-col fixed h-full z-20">
-        <div className="p-6 border-b border-stone-100">
+      <aside className={`w-64 bg-white border-r border-stone-200 flex flex-col fixed h-full z-40 transition-transform duration-300 ${
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+      }`}>
+        <div className="p-6 border-b border-stone-100 flex items-center justify-between">
           <h1 className="font-serif italic text-2xl text-stone-900">
             Dyayly{' '}
-            <span className="text-xs uppercase tracking-widest text-amber-500 font-sans not-italic ml-2">
+            <span className="text-xs uppercase tracking-widest text-purple-500 font-sans not-italic ml-2">
               Admin
             </span>
           </h1>
+          <button
+            className="md:hidden p-1 text-stone-400 hover:text-stone-700"
+            onClick={() => setSidebarOpen(false)}
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           {tabs.map(tab => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => { setActiveTab(tab.id); setSidebarOpen(false); }}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                   isActive
-                    ? 'bg-stone-900 text-amber-100 shadow-md'
+                    ? 'bg-stone-900 text-purple-200 shadow-md'
                     : 'text-stone-500 hover:bg-stone-50 hover:text-stone-900'
                 }`}
               >
@@ -423,7 +440,17 @@ export default function AdminDashboard() {
       </aside>
 
       {/* ── Contenu principal ── */}
-      <main className="flex-1 ml-64 p-8 lg:p-12 overflow-y-auto">
+      <main className="flex-1 md:ml-64 p-4 md:p-8 lg:p-12 overflow-y-auto">
+        {/* Bouton hamburger mobile */}
+        <div className="md:hidden flex items-center gap-3 mb-6">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="p-2 bg-white rounded-xl border border-stone-200 shadow-sm text-stone-600 hover:text-stone-900 transition"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+          <span className="font-serif italic text-stone-800 text-lg">Dyayly Admin</span>
+        </div>
         <AnimatePresence mode="wait">
 
           {/* ── COMMANDES ── */}
@@ -537,7 +564,7 @@ export default function AdminDashboard() {
                             <input
                               required type="text"
                               value={formTitle} onChange={e => setFormTitle(e.target.value)}
-                              className="w-full p-3 border border-stone-200 rounded-xl bg-stone-50 focus:outline-none focus:ring-2 focus:ring-amber-300"
+                              className="w-full p-3 border border-stone-200 rounded-xl bg-stone-50 focus:outline-none focus:ring-2 focus:ring-purple-300"
                             />
                           </div>
                           <div>
@@ -545,7 +572,7 @@ export default function AdminDashboard() {
                             <input
                               required type="number" step="0.05" min="0"
                               value={formPrice} onChange={e => setFormPrice(e.target.value)}
-                              className="w-full p-3 border border-stone-200 rounded-xl bg-stone-50 focus:outline-none focus:ring-2 focus:ring-amber-300"
+                              className="w-full p-3 border border-stone-200 rounded-xl bg-stone-50 focus:outline-none focus:ring-2 focus:ring-purple-300"
                             />
                           </div>
                         </div>
@@ -557,7 +584,7 @@ export default function AdminDashboard() {
                             rows={3}
                             value={formDescription} onChange={e => setFormDescription(e.target.value)}
                             placeholder="Décrivez le bijou, ses matériaux, son intention…"
-                            className="w-full p-3 border border-stone-200 rounded-xl bg-stone-50 focus:outline-none focus:ring-2 focus:ring-amber-300 resize-none text-sm"
+                            className="w-full p-3 border border-stone-200 rounded-xl bg-stone-50 focus:outline-none focus:ring-2 focus:ring-purple-300 resize-none text-sm"
                           />
                         </div>
 
@@ -650,19 +677,19 @@ export default function AdminDashboard() {
                                     placeholder="Type (ex : Couleur)"
                                     value={v.label}
                                     onChange={e => updateVariant(idx, 'label', e.target.value)}
-                                    className="flex-1 p-2.5 border border-stone-200 rounded-xl bg-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-300"
+                                    className="flex-1 p-2.5 border border-stone-200 rounded-xl bg-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-300"
                                   />
                                   <input
                                     placeholder="Valeur (ex : Turquoise)"
                                     value={v.value}
                                     onChange={e => updateVariant(idx, 'value', e.target.value)}
-                                    className="flex-1 p-2.5 border border-stone-200 rounded-xl bg-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-300"
+                                    className="flex-1 p-2.5 border border-stone-200 rounded-xl bg-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-300"
                                   />
                                   <input
                                     type="number" placeholder="+CHF"
                                     value={v.price_adjustment}
                                     onChange={e => updateVariant(idx, 'price_adjustment', parseFloat(e.target.value) || 0)}
-                                    className="w-20 p-2.5 border border-stone-200 rounded-xl bg-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-300"
+                                    className="w-20 p-2.5 border border-stone-200 rounded-xl bg-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-300"
                                   />
                                   <button type="button" onClick={() => removeVariant(idx)}
                                     className="p-2 text-stone-400 hover:text-red-500 transition shrink-0">
@@ -672,7 +699,7 @@ export default function AdminDashboard() {
                               ))}
                               <button
                                 type="button" onClick={addVariant}
-                                className="text-xs text-amber-600 hover:text-amber-700 flex items-center gap-1 font-medium pt-1"
+                                className="text-xs text-purple-500 hover:text-amber-700 flex items-center gap-1 font-medium pt-1"
                               >
                                 <Plus className="w-3 h-3" /> Ajouter une variante
                               </button>
@@ -691,7 +718,7 @@ export default function AdminDashboard() {
                           </button>
                           <button
                             type="submit" disabled={savingProduct}
-                            className="flex-1 py-3 bg-amber-200 text-stone-900 rounded-xl font-medium hover:bg-amber-300 transition disabled:opacity-50"
+                            className="flex-1 py-3 bg-purple-200 text-stone-900 rounded-xl font-medium hover:bg-purple-300 transition disabled:opacity-50"
                           >
                             {savingProduct ? 'Sauvegarde…' : 'Sauvegarder'}
                           </button>
@@ -734,7 +761,7 @@ export default function AdminDashboard() {
                               <div>
                                 <span className="font-medium text-stone-800 block">{item.title}</span>
                                 {item.product_variants?.length > 0 && (
-                                  <span className="text-xs text-amber-600">
+                                  <span className="text-xs text-purple-500">
                                     {item.product_variants.length} variante(s)
                                   </span>
                                 )}
@@ -748,7 +775,7 @@ export default function AdminDashboard() {
                           <td className="p-4 pr-6">
                             <div className="flex justify-end gap-2">
                               <button onClick={() => openEditModal(item)}
-                                className="p-2 text-stone-400 hover:text-amber-600 bg-white rounded-lg border border-stone-200 shadow-sm transition">
+                                className="p-2 text-stone-400 hover:text-purple-500 bg-white rounded-lg border border-stone-200 shadow-sm transition">
                                 <Edit3 className="w-4 h-4" />
                               </button>
                               <button onClick={() => handleDeleteProduct(item.id)}
@@ -787,7 +814,7 @@ export default function AdminDashboard() {
                     required type="text"
                     value={nlSubject} onChange={e => setNlSubject(e.target.value)}
                     placeholder="✨ Nouvelles créations d'Automne"
-                    className="w-full p-4 rounded-xl border border-stone-200 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-amber-300"
+                    className="w-full p-4 rounded-xl border border-stone-200 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-purple-300"
                   />
                 </div>
 
@@ -797,7 +824,7 @@ export default function AdminDashboard() {
                     required rows={8}
                     value={nlMessage} onChange={e => setNlMessage(e.target.value)}
                     placeholder="Rédigez votre message ici…"
-                    className="w-full p-4 rounded-xl border border-stone-200 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-amber-300"
+                    className="w-full p-4 rounded-xl border border-stone-200 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-purple-300"
                   />
                 </div>
 
@@ -853,7 +880,7 @@ export default function AdminDashboard() {
                   </p>
                   <button
                     type="submit" disabled={sendingNewsletter}
-                    className="flex items-center gap-2 bg-amber-200 text-stone-900 font-bold px-8 py-4 rounded-full hover:bg-amber-300 transition shadow-lg text-sm uppercase tracking-wider disabled:opacity-50"
+                    className="flex items-center gap-2 bg-purple-200 text-stone-900 font-bold px-8 py-4 rounded-full hover:bg-purple-300 transition shadow-lg text-sm uppercase tracking-wider disabled:opacity-50"
                   >
                     <Send className="w-4 h-4" />
                     {sendingNewsletter ? 'Envoi…' : 'Envoyer la campagne'}
@@ -907,7 +934,7 @@ export default function AdminDashboard() {
                   ))}
                   <div className="bg-amber-50 p-8 rounded-3xl shadow-sm border border-amber-200">
                     <h4 className="text-amber-800 text-xs uppercase tracking-widest mb-4">Chiffre d'Affaires</h4>
-                    <p className="text-4xl font-serif text-amber-600">{estimatedCA} <span className="text-xl">CHF</span></p>
+                    <p className="text-4xl font-serif text-purple-500">{estimatedCA} <span className="text-xl">CHF</span></p>
                   </div>
                 </div>
 
@@ -1018,7 +1045,7 @@ export default function AdminDashboard() {
                       placeholder="ex : ETE2026"
                       value={promoFormCode}
                       onChange={e => setPromoFormCode(e.target.value.toUpperCase())}
-                      className="w-full p-3 border border-stone-200 rounded-xl bg-stone-50 focus:outline-none focus:ring-2 focus:ring-amber-300 font-mono uppercase"
+                      className="w-full p-3 border border-stone-200 rounded-xl bg-stone-50 focus:outline-none focus:ring-2 focus:ring-purple-300 font-mono uppercase"
                     />
                   </div>
                   <div className="w-32">
@@ -1030,7 +1057,7 @@ export default function AdminDashboard() {
                       placeholder="15"
                       value={promoFormPct}
                       onChange={e => setPromoFormPct(e.target.value)}
-                      className="w-full p-3 border border-stone-200 rounded-xl bg-stone-50 focus:outline-none focus:ring-2 focus:ring-amber-300"
+                      className="w-full p-3 border border-stone-200 rounded-xl bg-stone-50 focus:outline-none focus:ring-2 focus:ring-purple-300"
                     />
                   </div>
                   <button

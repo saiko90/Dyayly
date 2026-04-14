@@ -68,9 +68,9 @@ export default function Home() {
       {/* TOP BAR — Bannière newsletter */}
       <button
         onClick={() => setIsModalOpen(true)}
-        className="fixed top-0 inset-x-0 z-[60] flex items-center justify-center py-1.5 bg-[#5C3D1E] backdrop-blur-sm border-b border-amber-900/30 hover:bg-[#7A4E2D] transition-colors w-full cursor-pointer"
+        className="fixed top-0 inset-x-0 z-[60] flex items-center justify-center py-1.5 bg-purple-400 backdrop-blur-sm border-b border-purple-300/40 hover:bg-purple-500 transition-colors w-full cursor-pointer"
       >
-        <p className="text-[10px] md:text-xs tracking-[0.25em] uppercase font-light text-amber-100">
+        <p className="text-[10px] md:text-xs tracking-[0.25em] uppercase font-light text-white">
           ✨&nbsp;−15% sur votre première commande en vous inscrivant à la newsletter&nbsp;✨
         </p>
       </button>
@@ -96,8 +96,8 @@ export default function Home() {
           <p className="text-sm md:text-base font-light text-[#7A4E2D] max-w-md mx-auto leading-relaxed mb-12">
             DYAYLY c'est des bijoux et un univers créé pour aider chacune à reprendre la clé de sa propre énergie ✨
           </p>
-          {/* Ligne magique or */}
-          <div className="h-px w-32 bg-amber-400 mx-auto rounded-full" />
+          {/* Ligne magique */}
+          <div className="h-px w-32 bg-purple-400 mx-auto rounded-full" />
         </motion.div>
       </section>
 
@@ -113,7 +113,7 @@ export default function Home() {
           <p className="text-xl md:text-2xl leading-relaxed font-light text-stone-600">
             "Chaque création porte une intention : celle de déposer un éclat de douceur, d’amour et de clarté. Des bijoux faits à la main pour accompagner les renaissances intérieures."
           </p>
-          <div className="h-px w-24 bg-amber-300 mx-auto" />
+          <div className="h-px w-24 bg-purple-300 mx-auto" />
         </motion.div>
       </section>
 
@@ -121,7 +121,7 @@ export default function Home() {
       <section className="py-24 px-6 max-w-7xl mx-auto z-10 relative">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-serif italic text-stone-800 mb-6">Les Créations</h2>
-          <p className="text-amber-500 uppercase tracking-widest text-xs">Fait hand with love</p>
+          <p className="text-purple-500 uppercase tracking-widest text-xs">Fait hand with love</p>
         </div>
 
         {loadingProducts ? (
@@ -175,12 +175,12 @@ export default function Home() {
                         )}
                       </div>
                       <div className="flex items-end justify-between mt-4 pt-4 border-t border-white/40">
-                        <span className="text-3xl font-serif text-stone-900 group-hover:text-amber-700 transition-colors">
+                        <span className="text-3xl font-serif text-stone-900 group-hover:text-purple-600 transition-colors">
                           {product.price} <span className="text-lg">CHF</span>
                         </span>
                         <Link
                           href="/boutique"
-                          className="text-xs uppercase tracking-widest text-amber-600 hover:text-amber-800 transition-colors font-medium"
+                          className="text-xs uppercase tracking-widest text-purple-500 hover:text-amber-800 transition-colors font-medium"
                         >
                           Voir →
                         </Link>
@@ -195,7 +195,7 @@ export default function Home() {
               <div className="text-center mt-12">
                 <Link
                   href="/boutique"
-                  className="inline-block px-10 py-4 border border-amber-400/60 text-[#7A4E2D] rounded-full text-xs tracking-widest uppercase hover:bg-amber-50 transition-colors"
+                  className="inline-block px-10 py-4 border border-purple-300/60 text-[#7A4E2D] rounded-full text-xs tracking-widest uppercase hover:bg-purple-50 transition-colors"
                 >
                   Voir toutes les créations
                 </Link>
@@ -205,28 +205,7 @@ export default function Home() {
         )}
       </section>
 
-      {/* 5. Section Ateliers (Appel à l'action magique) */}
-      <section className="py-32 px-6 z-10 relative">
-        <div className="max-w-5xl mx-auto bg-stone-900 rounded-[3rem] p-16 text-white relative overflow-hidden shadow-2xl">
-          <div className="relative z-10 space-y-8">
-            <h2 className="text-4xl md:text-5xl font-serif italic text-amber-200">Ateliers & Cercles</h2>
-            <p className="text-lg font-light text-stone-300 max-w-2xl leading-relaxed">
-              Des moments conçus comme des refuges pour l’âme. Se reconnecter à ses mains et à son intuition autour d’un thé ou d’un café, pour créer en toute douceur.
-            </p>
-            <motion.button 
-              onClick={() => setIsModalOpen(true)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-10 py-4 bg-amber-100 text-stone-900 rounded-full text-xs tracking-widest uppercase font-medium hover:bg-white transition-colors"
-            >
-              Être informé de l'ouverture
-            </motion.button>
-          </div>
-          <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/20 blur-[120px] rounded-full pointer-events-none" />
-        </div>
-      </section>
-
-      {/* MODAL INSCRIPTION ATELIERS */}
+      {/* MODAL INSCRIPTION NEWSLETTER */}
       <AnimatePresence>
         {isModalOpen && (
           <>
@@ -253,7 +232,7 @@ export default function Home() {
                   placeholder="Votre adresse email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full p-4 rounded-xl border border-stone-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-amber-300"
+                  className="w-full p-4 rounded-xl border border-stone-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-purple-300"
                 />
                 <div className="flex gap-4 pt-4">
                   <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-3 text-stone-500 hover:bg-stone-100 rounded-full transition">Annuler</button>
@@ -270,12 +249,12 @@ export default function Home() {
         <GlassContacts />
       </section>
 
-      <footer className="py-12 border-t border-amber-200/40 relative z-10 flex flex-col items-center justify-center space-y-4">
+      <footer className="py-12 border-t border-purple-200/40 relative z-10 flex flex-col items-center justify-center space-y-4">
         <p className="text-stone-400 text-[10px] tracking-[0.5em] uppercase">Dyayly — L'amour tissé en bijoux</p>
         <div className="flex items-center gap-6 text-xs text-stone-500 font-light hover:text-stone-700 transition-colors">
-          <a href="/cgv" className="hover:text-amber-600 transition">CGV (Suisse)</a>
+          <a href="/cgv" className="hover:text-purple-500 transition">CGV (Suisse)</a>
           <span>|</span>
-          <a href="/mentions-legales" className="hover:text-amber-600 transition">Mentions Légales</a>
+          <a href="/mentions-legales" className="hover:text-purple-500 transition">Mentions Légales</a>
         </div>
         <p className="text-stone-400 text-[10px] tracking-widest mt-8">
           Site web créé par <span className="font-semibold text-stone-600">Swiss Digital Studio © 2026</span>

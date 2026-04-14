@@ -42,8 +42,8 @@ export default function BoutiquePage() {
       {/* HEADER */}
       <section className="relative pt-32 pb-16 md:pt-48 md:pb-24 px-6 max-w-4xl mx-auto text-center z-10">
         <motion.div initial="hidden" animate="show" variants={staggerContainer}>
-          <motion.span variants={fadeUp} className="text-amber-600 uppercase tracking-[0.3em] text-xs font-medium mb-4 block">
-            L'Atelier
+          <motion.span variants={fadeUp} className="text-purple-500 uppercase tracking-[0.3em] text-xs font-medium mb-4 block">
+            Les Créations
           </motion.span>
           <motion.h1 variants={fadeUp} className="text-5xl md:text-7xl font-serif italic mb-8 leading-tight">
             Les Créations

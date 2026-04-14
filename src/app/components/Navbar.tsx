@@ -42,34 +42,34 @@ export default function Navbar() {
         }}
         animate={hidden ? "hidden" : "visible"}
         transition={{ duration: 0.4, ease: "easeInOut" }}
-        className="fixed top-4 md:top-6 inset-x-4 md:inset-x-0 mx-auto z-50 max-w-5xl md:max-w-fit px-6 py-4 rounded-full border border-white/40 bg-white/20 backdrop-blur-2xl shadow-lg flex justify-between items-center"
+        className="fixed top-9 md:top-10 inset-x-4 md:inset-x-0 mx-auto z-50 max-w-5xl md:max-w-fit px-6 py-4 rounded-full border border-white/40 bg-white/20 backdrop-blur-2xl shadow-lg flex justify-between items-center"
       >
         {/* Logo Mobile (visible uniquement sur petit écran) */}
-        <Link href="/" className="md:hidden font-serif italic text-lg text-stone-800 tracking-widest hover:text-amber-600 transition-colors">
+        <Link href="/" className="md:hidden font-serif italic text-lg text-stone-800 tracking-widest hover:text-purple-500 transition-colors">
           Dyayly
         </Link>
 
         {/* Liens Desktop */}
         <ul className="hidden md:flex items-center gap-10 text-xs uppercase tracking-[0.2em] font-light text-stone-800">
-          <li className="hover:text-amber-600 transition-colors"><Link href="/">Accueil</Link></li>
-          <li className="hover:text-amber-600 transition-colors"><Link href="/histoire">Histoire</Link></li>
-          <li className="text-[15px] font-serif italic lowercase tracking-normal px-4 border-x border-stone-400 hover:text-amber-600 transition-colors">
+          <li className="hover:text-purple-500 transition-colors"><Link href="/">Accueil</Link></li>
+          <li className="hover:text-purple-500 transition-colors"><Link href="/histoire">Histoire</Link></li>
+          <li className="text-[15px] font-serif italic lowercase tracking-normal px-4 border-x border-stone-400 hover:text-purple-500 transition-colors">
             <Link href="/">Dyayly</Link>
           </li>
-          <li className="hover:text-amber-600 transition-colors"><Link href="/boutique">Boutique</Link></li>
-          {/* <li className="hover:text-amber-600 transition-colors"><Link href="/ateliers">Ateliers</Link></li> */}
+          <li className="hover:text-purple-500 transition-colors"><Link href="/boutique">Boutique</Link></li>
+          {/* <li className="hover:text-purple-500 transition-colors"><Link href="/ateliers">Ateliers</Link></li> */}
         </ul>
 
         <div className="flex items-center gap-4 md:gap-6">
           {/* Compte Utilisateur */}
-          <Link href="/profile" className="p-2 text-stone-800 hover:text-amber-600 transition">
+          <Link href="/profile" className="p-2 text-stone-800 hover:text-purple-500 transition">
             <User className="w-5 h-5" />
           </Link>
 
           {/* Panier (Desktop & Mobile) */}
           <button 
             onClick={toggleDrawer} 
-            className="relative p-2 text-stone-800 hover:text-amber-600 transition"
+            className="relative p-2 text-stone-800 hover:text-purple-500 transition"
           >
             <ShoppingBag className="w-5 h-5" />
             {mounted && items.length > 0 && (
@@ -108,7 +108,7 @@ export default function Navbar() {
               className="fixed top-0 left-0 h-full w-[85%] max-w-sm bg-[#FDFBF7] shadow-2xl z-[70] flex flex-col md:hidden"
             >
               <div className="p-6 flex justify-between items-center border-b border-stone-200">
-                <Link href="/" onClick={() => setIsOpen(false)} className="font-serif italic text-xl text-stone-800 hover:text-amber-600 transition-colors">
+                <Link href="/" onClick={() => setIsOpen(false)} className="font-serif italic text-xl text-stone-800 hover:text-purple-500 transition-colors">
                   Dyayly
                 </Link>
                 <button 
@@ -125,7 +125,7 @@ export default function Navbar() {
                     key={link.name}
                     href={link.path} 
                     onClick={() => setIsOpen(false)}
-                    className="text-3xl font-serif italic text-stone-800 hover:text-amber-600 transition-colors border-b border-stone-100 pb-4"
+                    className="text-3xl font-serif italic text-stone-800 hover:text-purple-500 transition-colors border-b border-stone-100 pb-4"
                   >
                     {link.name}
                   </Link>
@@ -134,7 +134,7 @@ export default function Navbar() {
               
               <div className="p-8 bg-stone-50 border-t border-stone-200 mt-auto">
                 <p className="text-[10px] uppercase tracking-[0.3em] text-stone-500 mb-2">Suivez-nous</p>
-                <a href="https://www.instagram.com/dyayly555?igsh=MW91YXRwNWRzZ2k5bA==" target="_blank" className="text-sm font-light text-stone-800 hover:text-amber-600 transition">
+                <a href="https://www.instagram.com/dyayly555?igsh=MW91YXRwNWRzZ2k5bA==" target="_blank" className="text-sm font-light text-stone-800 hover:text-purple-500 transition">
                   @dyayly555
                 </a>
               </div>

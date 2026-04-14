@@ -120,14 +120,14 @@ export default function OrderCard({ order, onStatusChange }: OrderCardProps) {
 
       {/* Actions — uniquement pour les commandes payées */}
       {order.status === 'paid' && (
-        <div className="px-6 py-4 bg-green-50 border-t border-green-100 flex flex-wrap gap-3">
+        <div className="px-4 sm:px-6 py-4 bg-green-50 border-t border-green-100 flex flex-col sm:flex-row flex-wrap gap-3">
           <p className="w-full text-xs text-green-700 font-medium mb-1">
             ✅ Paiement confirmé — que faire de cette commande ?
           </p>
           <button
             onClick={() => handleAction('shipped', `📦 Commande #${ref} marquée comme expédiée !`)}
             disabled={busy}
-            className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm transition shadow disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm transition shadow disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Truck className="w-4 h-4" />
             {busy ? 'En cours…' : 'Marquer comme Expédié 📦'}
@@ -139,7 +139,7 @@ export default function OrderCard({ order, onStatusChange }: OrderCardProps) {
               }
             }}
             disabled={busy}
-            className="flex items-center gap-2 px-5 py-3 bg-white hover:bg-red-50 text-red-600 border border-red-200 rounded-xl font-medium text-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3 bg-white hover:bg-red-50 text-red-600 border border-red-200 rounded-xl font-medium text-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Ban className="w-4 h-4" />
             Annuler la commande

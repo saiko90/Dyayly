@@ -9,10 +9,10 @@ const ContactItem = ({ icon: Icon, label, value, href = '#' }: { icon: any, labe
     target={href !== '#' ? '_blank' : undefined}
     rel={href !== '#' ? 'noopener noreferrer' : undefined}
     whileHover={{ x: 10 }}
-    className="flex items-center gap-4 text-stone-700 hover:text-purple-700 transition-colors group"
+    className="flex items-center gap-4 text-stone-700 hover:text-purple-600 transition-colors group"
   >
-    <div className="p-2.5 rounded-full bg-amber-100/60 border border-amber-200/50 group-hover:bg-purple-100/60">
-      <Icon className="w-5 h-5 text-amber-800/80 group-hover:text-purple-800" />
+    <div className="p-2.5 rounded-full bg-transparent border border-purple-300/50 group-hover:bg-purple-100/30 transition-colors">
+      <Icon className="w-5 h-5 text-purple-500 group-hover:text-purple-700" />
     </div>
     <div>
       <p className="text-xs uppercase tracking-widest text-stone-500">{label}</p>

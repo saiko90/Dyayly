@@ -60,10 +60,11 @@ export default function AdminDashboard() {
   const [savingContent,    setSavingContent]    = useState(false);
 
   // ── Bannière promotionnelle ────────────────────────────────
-  const [bannerText,    setBannerText]    = useState('');
-  const [bannerActive,  setBannerActive]  = useState(true);
-  const [loadingBanner, setLoadingBanner] = useState(false);
-  const [savingBanner,  setSavingBanner]  = useState(false);
+  const [bannerText,        setBannerText]        = useState('');
+  const [bannerActive,      setBannerActive]      = useState(true);
+  const [welcomePromoCode,  setWelcomePromoCode]  = useState('');
+  const [loadingBanner,     setLoadingBanner]     = useState(false);
+  const [savingBanner,      setSavingBanner]      = useState(false);
 
   // ── Commandes ──────────────────────────────────────────────
   const [orders,        setOrders]        = useState<any[]>([]);
@@ -113,6 +114,7 @@ export default function AdminDashboard() {
         const data = await res.json();
         setBannerText(data.promo_banner_text ?? '');
         setBannerActive(data.promo_banner_active ?? true);
+        setWelcomePromoCode(data.welcome_promo_code ?? 'BIENVENUE15');
       }
     } catch { /* ignore */ }
     finally { setLoadingBanner(false); }
@@ -125,7 +127,7 @@ export default function AdminDashboard() {
       const res = await fetch('/api/admin/settings', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ promo_banner_text: bannerText, promo_banner_active: bannerActive }),
+        body: JSON.stringify({ promo_banner_text: bannerText, promo_banner_active: bannerActive, welcome_promo_code: welcomePromoCode }),
       });
       if (!res.ok) throw new Error((await res.json()).error);
       toast.success('Bannière mise à jour ! ✨');
@@ -1368,6 +1370,28 @@ export default function AdminDashboard() {
                         placeholder="✨ −15% sur votre première commande…"
                         className="w-full p-4 rounded-xl border border-stone-200 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-purple-300 text-sm"
                       />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs uppercase tracking-widest text-stone-500 mb-2">
+                        Code Promo pour l'e-mail de bienvenue
+                      </label>
+                      <input
+                        type="text"
+                        value={welcomePromoCode}
+                        onChange={e => setWelcomePromoCode(e.target.value)}
+                        placeholder="BIENVENUE15"
+                        className="w-full p-4 rounded-xl border border-stone-200 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-purple-300 text-sm font-mono uppercase"
+                      />
+                      <p className="text-xs text-stone-400 mt-1.5">
+                        Ce code sera automatiquement inséré dans l'e-mail envoyé aux nouveaux abonnés à la newsletter.
+                      </p>
+                      <div className="mt-3 flex items-start gap-2.5 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+                        <span className="text-base leading-none mt-0.5">⚠️</span>
+                        <p className="text-xs text-amber-800 leading-relaxed">
+                          <strong>Attention :</strong> Changer ce texte modifie uniquement le mot envoyé dans l'e-mail. N'oubliez pas de créer concrètement ce code promo dans l'onglet <strong>"Promotions"</strong> pour qu'il fonctionne lors du paiement.
+                        </p>
+                      </div>
                     </div>
 
                     <div className="flex items-center justify-between">

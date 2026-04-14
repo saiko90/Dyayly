@@ -32,6 +32,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Erreur lors de l\'inscription.' }, { status: 500 });
     }
 
+    // ── Récupération du code promo dynamique ──────────────────────────────
+    let promoCode = 'BIENVENUE15';
+    try {
+      const { data: settingRow } = await supabase
+        .from('site_settings')
+        .select('value')
+        .eq('key', 'welcome_promo_code')
+        .single();
+      if (settingRow?.value) promoCode = settingRow.value;
+    } catch { /* fallback conservé */ }
+
     const html = `
       <!DOCTYPE html>
       <html lang="fr">
@@ -74,11 +85,11 @@ export async function POST(req: Request) {
                           <p style="margin:0 0 8px; color:#A67C52; font-size:11px; letter-spacing:0.3em; text-transform:uppercase; font-family: sans-serif;">
                             Votre code de bienvenue
                           </p>
-                          <p style="margin:0 0 12px; color:#5C3D1E; font-size:36px; font-family: 'Courier New', monospace; font-weight:700; letter-spacing:0.15em;">
-                            BIENVENUE15
+                          <p style="margin:0 0 12px; color:#5C3D1E; font-size:32px; font-family: 'Courier New', monospace; font-weight:700; letter-spacing:0.1em; word-break:break-all;">
+                            ${promoCode}
                           </p>
                           <p style="margin:0; color:#8B5E3C; font-size:15px; font-family: sans-serif;">
-                            <strong>−15%</strong> sur votre première commande
+                            À utiliser lors de votre première commande
                           </p>
                         </td>
                       </tr>

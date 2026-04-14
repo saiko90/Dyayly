@@ -85,7 +85,7 @@ async function sendAdminAlert(order: any) {
   const orderRef  = order.id?.slice(0, 8).toUpperCase() ?? '????????';
   const total     = (order.total_price ?? 0).toFixed(2);
   const client    = [order.full_name, order.user_email].filter(Boolean).join(' — ');
-  const dashUrl   = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://dyayly.ch'}/admin`;
+  const dashUrl   = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.dyayly.ch'}/admin`;
 
   const html = `
     <!DOCTYPE html>

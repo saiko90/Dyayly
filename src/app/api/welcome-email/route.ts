@@ -93,7 +93,7 @@ export async function POST(req: Request) {
                 <!-- CTA -->
                 <tr>
                   <td style="padding: 0 48px 48px; text-align: center;">
-                    <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://dyayly.ch'}/boutique"
+                    <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.dyayly.ch'}/boutique"
                       style="display:inline-block; padding: 16px 40px; background: #E9D5FF; color: #5D4037; text-decoration:none; border-radius:50px; font-size:12px; letter-spacing:0.2em; text-transform:uppercase; font-family: sans-serif; font-weight:600;">
                       Découvrir la boutique
                     </a>

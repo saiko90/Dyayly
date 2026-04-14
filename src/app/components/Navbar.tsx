@@ -42,7 +42,7 @@ export default function Navbar() {
         }}
         animate={hidden ? "hidden" : "visible"}
         transition={{ duration: 0.4, ease: "easeInOut" }}
-        className="fixed top-9 md:top-10 inset-x-4 md:inset-x-0 mx-auto z-50 max-w-5xl md:max-w-fit px-6 py-4 rounded-full border border-white/40 bg-white/20 backdrop-blur-2xl shadow-lg flex justify-between items-center"
+        className="fixed top-12 md:top-12 inset-x-4 md:inset-x-0 mx-auto z-50 max-w-5xl md:max-w-fit px-6 py-4 rounded-full border border-white/40 bg-white/20 backdrop-blur-2xl shadow-lg flex justify-between items-center"
       >
         {/* Logo Mobile (visible uniquement sur petit écran) */}
         <Link href="/" className="md:hidden font-serif italic text-lg text-stone-800 tracking-widest hover:text-purple-500 transition-colors">

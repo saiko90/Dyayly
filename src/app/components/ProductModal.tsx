@@ -213,7 +213,7 @@ export default function ProductModal({ product, onClose }: Props) {
 
               {/* Description */}
               {product.description && (
-                <p className="text-sm font-light text-stone-600 leading-relaxed">{product.description}</p>
+                <p className="text-sm font-light text-amber-900/80 leading-relaxed">{product.description}</p>
               )}
 
               {/* ── Sélecteurs de variantes ── */}
@@ -235,7 +235,7 @@ export default function ProductModal({ product, onClose }: Props) {
                           className={`px-4 py-2 rounded-full text-xs font-medium border transition-all ${
                             isActive
                               ? 'bg-stone-900 text-amber-100 border-stone-900 shadow-md scale-[1.03]'
-                              : 'bg-white border-stone-200 text-stone-700 hover:border-amber-400 hover:text-amber-700'
+                              : 'bg-white border-stone-200 text-stone-700 hover:border-purple-400 hover:text-purple-600'
                           }`}
                         >
                           {v.value}
@@ -258,8 +258,8 @@ export default function ProductModal({ product, onClose }: Props) {
             <div className="mt-6 pt-6 border-t border-stone-100">
               <div className="flex items-end justify-between mb-5">
                 <div>
-                  <span className="text-4xl font-serif text-stone-900">{finalPrice.toFixed(2)}</span>
-                  <span className="text-lg text-stone-400 ml-1.5">CHF</span>
+                  <span className="text-4xl font-serif text-amber-700">{finalPrice.toFixed(2)}</span>
+                  <span className="text-lg text-amber-900/50 ml-1.5">CHF</span>
                 </div>
                 {groupLabels.length > 0 && !allSelected && (
                   <p className="text-xs text-stone-400 text-right max-w-[130px] leading-relaxed">

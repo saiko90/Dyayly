@@ -65,15 +65,24 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen text-stone-900 selection:bg-purple-100 overflow-hidden">
-      {/* TOP BAR — Bannière newsletter */}
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="fixed top-0 inset-x-0 z-[60] flex items-center justify-center py-1.5 bg-purple-400 backdrop-blur-sm border-b border-purple-300/40 hover:bg-purple-500 transition-colors w-full cursor-pointer"
-      >
-        <p className="text-[10px] md:text-xs tracking-[0.25em] uppercase font-light text-white">
-          ✨&nbsp;−15% sur votre première commande en vous inscrivant à la newsletter&nbsp;✨
-        </p>
-      </button>
+      {/* TOP BAR — Bannière double */}
+      <div className="fixed top-0 inset-x-0 z-[60] flex flex-col">
+        {/* Ligne promo (cliquable) */}
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="flex items-center justify-center py-1.5 bg-purple-400 hover:bg-purple-500 transition-colors w-full cursor-pointer border-b border-purple-300/30"
+        >
+          <p className="text-[10px] md:text-xs tracking-[0.25em] uppercase font-light text-white">
+            ✨&nbsp;−15% sur votre première commande en vous inscrivant à la newsletter&nbsp;✨
+          </p>
+        </button>
+        {/* Ligne mots-clés */}
+        <div className="flex items-center justify-center py-1 bg-white/80 backdrop-blur-sm border-b border-purple-100/60">
+          <p className="text-[10px] md:text-[11px] tracking-[0.2em] text-purple-500 font-light">
+            🧚‍♀️ Créativité&nbsp;&nbsp;·&nbsp;&nbsp;✨ Éveil&nbsp;&nbsp;·&nbsp;&nbsp;🌙 Positivité
+          </p>
+        </div>
+      </div>
 
       <Navbar />
       
@@ -120,8 +129,7 @@ export default function Home() {
       {/* 4. Section Créations — données Supabase */}
       <section className="py-24 px-6 max-w-7xl mx-auto z-10 relative">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-serif italic text-stone-800 mb-6">Les Créations</h2>
-          <p className="text-purple-500 uppercase tracking-widest text-xs">Fait hand with love</p>
+          <h2 className="text-4xl font-serif italic text-stone-800 mb-6">Best sellers</h2>
         </div>
 
         {loadingProducts ? (
@@ -169,13 +177,13 @@ export default function Home() {
                           {product.title}
                         </h3>
                         {product.description && (
-                          <p className="text-xs text-stone-500 font-light leading-relaxed line-clamp-2">
+                          <p className="text-xs text-amber-900/70 font-light leading-relaxed line-clamp-2">
                             {product.description}
                           </p>
                         )}
                       </div>
                       <div className="flex items-end justify-between mt-4 pt-4 border-t border-white/40">
-                        <span className="text-3xl font-serif text-stone-900 group-hover:text-purple-600 transition-colors">
+                        <span className="text-3xl font-serif text-amber-700 transition-colors">
                           {product.price} <span className="text-lg">CHF</span>
                         </span>
                         <Link

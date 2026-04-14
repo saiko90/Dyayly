@@ -16,7 +16,7 @@ export default function PriceCard({ title, price }: PriceCardProps) {
       className="group bg-white/20 backdrop-blur-md border border-white/40 p-8 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 text-center"
     >
       <h3 className="text-stone-700 font-light uppercase tracking-widest text-sm mb-4">{title}</h3>
-      <div className="text-3xl font-serif text-stone-900 group-hover:text-amber-700 transition-colors">
+      <div className="text-3xl font-serif text-amber-700">
         {price} <span className="text-lg">CHF</span>
       </div>
     </motion.div>

@@ -51,8 +51,7 @@ export default function MagicCursor() {
 
   if (!isDesktop) return null;
 
-  const neonLilac = "#d8b4fe"; // Lila clair
-  const neonGold = "#fbbf24"; // Or/Ambre
+  const violet = "#C084FC"; // Violet clair
 
   return (
     <motion.div
@@ -62,25 +61,24 @@ export default function MagicCursor() {
         y: springY,
         translateX: "-50%",
         translateY: "-50%",
-        // Cercle évidé en hover pour bien voir en dessous, petit point solide sinon
-        backgroundColor: isHovering ? "transparent" : neonLilac,
-        border: isHovering ? `1.5px solid ${neonGold}` : "none",
-        width: isHovering ? 40 : 8,
-        height: isHovering ? 40 : 8,
+        backgroundColor: isHovering ? "transparent" : violet,
+        border: isHovering ? `1.5px solid ${violet}` : "none",
+        width: isHovering ? 26 : 6,
+        height: isHovering ? 26 : 6,
       }}
       transition={{ duration: 0.2, ease: "easeOut" }}
     >
       {/* Halo léger */}
-      <motion.div 
-        className="absolute inset-0 rounded-full blur-[8px] opacity-60"
+      <motion.div
+        className="absolute inset-0 rounded-full blur-[6px] opacity-50"
         style={{
-          backgroundColor: isHovering ? neonGold : neonLilac,
-          scale: isHovering ? 1.2 : 2.5,
+          backgroundColor: violet,
+          scale: isHovering ? 1.1 : 2,
         }}
       />
-      {/* Petit point central quand on hover pour garder la précision */}
+      {/* Petit point central en hover */}
       {isHovering && (
-        <div className="w-1 h-1 rounded-full bg-white opacity-90 shadow-[0_0_10px_#fbbf24]" />
+        <div className="w-1 h-1 rounded-full bg-white opacity-80 shadow-[0_0_8px_#C084FC]" />
       )}
     </motion.div>
   );

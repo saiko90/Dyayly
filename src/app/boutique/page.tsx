@@ -59,7 +59,7 @@ export default function BoutiquePage() {
       <section className="relative z-10 px-4 md:px-6 max-w-6xl mx-auto mb-24">
         {loading ? (
           <div className="flex justify-center items-center py-20">
-            <div className="w-8 h-8 rounded-full border-4 border-amber-300 border-t-transparent animate-spin" />
+            <div className="w-8 h-8 rounded-full border-4 border-purple-300 border-t-transparent animate-spin" />
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
@@ -109,12 +109,12 @@ export default function BoutiquePage() {
                     <div>
                       <h3 className="text-xl font-serif italic text-stone-800 mb-1">{product.title}</h3>
                       {product.description && (
-                        <p className="text-xs text-stone-500 font-light uppercase tracking-widest leading-relaxed line-clamp-2">
+                        <p className="text-xs text-amber-900/70 font-light uppercase tracking-widest leading-relaxed line-clamp-2">
                           {product.description}
                         </p>
                       )}
                     </div>
-                    <div className="flex items-end justify-between border-t border-amber-200/50 pt-4 mt-4">
+                    <div className="flex items-end justify-between border-t border-purple-200/50 pt-4 mt-4">
                       <div>
                         <span className="text-3xl font-serif text-amber-700">{product.price}</span>
                         <span className="text-sm font-medium text-amber-900/60 ml-1">CHF</span>
@@ -150,9 +150,9 @@ export default function BoutiquePage() {
             <div className="space-y-6 border-t md:border-t-0 md:border-l border-stone-700 pt-8 md:pt-0 md:pl-12">
               <h3 className="text-3xl font-serif italic text-amber-200">Matériaux choisis</h3>
               <ul className="space-y-4 font-light text-stone-300">
-                <li className="flex items-start gap-3"><span className="text-amber-400 mt-1">•</span> Fil Lithanisa ciré ou nylon polyester (tissage solide et confortable).</li>
-                <li className="flex items-start gap-3"><span className="text-amber-400 mt-1">•</span> Pierres naturelles soigneusement sélectionnées.</li>
-                <li className="flex items-start gap-3"><span className="text-amber-400 mt-1">•</span> Perles en verre, bois, acier inoxydable et laiton.</li>
+                <li className="flex items-start gap-3"><span className="text-purple-400 mt-1">•</span> Fil Lithanisa ciré ou nylon polyester (tissage solide et confortable).</li>
+                <li className="flex items-start gap-3"><span className="text-purple-400 mt-1">•</span> Pierres naturelles soigneusement sélectionnées.</li>
+                <li className="flex items-start gap-3"><span className="text-purple-400 mt-1">•</span> Perles en verre, bois, acier inoxydable et laiton.</li>
               </ul>
             </div>
           </div>

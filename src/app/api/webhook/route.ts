@@ -152,11 +152,11 @@ async function sendInvoiceEmail(order: any, session: Stripe.Checkout.Session) {
 
               <!-- Header -->
               <tr>
-                <td style="background: linear-gradient(135deg, #7A4E2D, #C4956A); padding: 48px 40px; text-align: center;">
-                  <h1 style="margin:0; color:#FFF8F0; font-size:36px; font-style:italic; font-weight:400; letter-spacing:0.05em;">
+                <td style="background: linear-gradient(135deg, #EDE9FE, #DDD6FE); padding: 48px 40px; text-align: center;">
+                  <h1 style="margin:0; color:#5D4037; font-size:36px; font-style:italic; font-weight:400; letter-spacing:0.05em;">
                     Dyayly
                   </h1>
-                  <p style="margin:10px 0 0; color:rgba(255,248,240,0.75); font-size:11px; letter-spacing:0.3em; text-transform:uppercase; font-family: sans-serif;">
+                  <p style="margin:10px 0 0; color:rgba(93,64,55,0.65); font-size:11px; letter-spacing:0.3em; text-transform:uppercase; font-family: sans-serif;">
                     L'amour tissé en bijoux
                   </p>
                 </td>
@@ -266,8 +266,8 @@ async function sendInvoiceEmail(order: any, session: Stripe.Checkout.Session) {
 
               <!-- Footer -->
               <tr>
-                <td style="background:#F9F5F0; padding:24px 48px; text-align:center; border-top: 1px solid #EDE8E0;">
-                  <p style="margin:0; font-size:10px; color:#A67C52; letter-spacing:0.25em; text-transform:uppercase; font-family: sans-serif;">
+                <td style="background:#FDFBF7; padding:24px 48px; text-align:center; border-top: 1px solid #EDE8E0;">
+                  <p style="margin:0; font-size:10px; color:#5D4037; letter-spacing:0.25em; text-transform:uppercase; font-family: sans-serif;">
                     Dyayly — Valleyres-sous-montagny, Suisse · contact@dyayly.ch
                   </p>
                 </td>

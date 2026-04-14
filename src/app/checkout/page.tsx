@@ -23,7 +23,7 @@ export default function CheckoutPage() {
   const [address,      setAddress]      = useState('');
   const [postalCode,   setPostalCode]   = useState('');
   const [city,         setCity]         = useState('');
-  const [country,      setCountry]      = useState<'CH' | 'EU' | 'WORLD'>('CH');
+  const [country,      setCountry]      = useState<'CH' | 'EU'>('CH');
   const [customerNote, setCustomerNote] = useState('');
 
   // Code promo
@@ -219,12 +219,11 @@ export default function CheckoutPage() {
                 </label>
                 <select
                   value={country}
-                  onChange={e => setCountry(e.target.value as 'CH' | 'EU' | 'WORLD')}
+                  onChange={e => setCountry(e.target.value as 'CH' | 'EU')}
                   className={`${inputCls} cursor-pointer`}
                 >
-                  <option value="CH">🇨🇭 Suisse — 5 CHF {subtotal >= FREE_SHIPPING_THRESHOLD ? '(GRATUIT ✓)' : ''}</option>
-                  <option value="EU">🇪🇺 Europe — 12 CHF {subtotal >= FREE_SHIPPING_THRESHOLD ? '(GRATUIT ✓)' : ''}</option>
-                  <option value="WORLD">🌍 Hors UE — 19 CHF {subtotal >= FREE_SHIPPING_THRESHOLD ? '(GRATUIT ✓)' : ''}</option>
+                  <option value="CH">Suisse  5.{subtotal >= FREE_SHIPPING_THRESHOLD ? '- (GRATUIT ✓)' : '-'}</option>
+                  <option value="EU">France, Belgique  12.{subtotal >= FREE_SHIPPING_THRESHOLD ? '- (GRATUIT ✓)' : '-'}</option>
                 </select>
                 {subtotal >= FREE_SHIPPING_THRESHOLD && (
                   <p className="text-xs text-green-600 mt-1.5 font-medium">
@@ -284,18 +283,18 @@ export default function CheckoutPage() {
             </div>
 
             {/* ── Récapitulatif ── */}
-            <div className="bg-stone-900 text-stone-100 p-8 rounded-[2rem] shadow-2xl flex flex-col">
-              <h2 className="text-2xl font-serif italic text-amber-200 mb-8">Récapitulatif</h2>
+            <div className="bg-[#F5E6D3] p-8 rounded-[2rem] shadow-sm border border-[#E8D5C0] flex flex-col">
+              <h2 className="text-2xl font-serif italic text-stone-800 mb-8">Récapitulatif</h2>
 
               <div className="space-y-3 flex-1">
                 {items.map(item => (
-                  <div key={item.id} className="pb-3 border-b border-stone-800">
-                    <div className="flex justify-between items-start text-stone-300 font-light">
+                  <div key={item.id} className="pb-3 border-b border-amber-900/20">
+                    <div className="flex justify-between items-start text-stone-700 font-light">
                       <span>{item.quantity}× {item.title}</span>
                       <span className="ml-4 shrink-0">{(item.price * item.quantity).toFixed(2)} CHF</span>
                     </div>
                     {item.selectedVariants && Object.keys(item.selectedVariants).length > 0 && (
-                      <p className="text-[10px] text-stone-500 mt-0.5">
+                      <p className="text-[10px] text-stone-400 mt-0.5">
                         {Object.entries(item.selectedVariants).map(([k, v]) => `${k}: ${v}`).join(' · ')}
                       </p>
                     )}
@@ -303,40 +302,40 @@ export default function CheckoutPage() {
                 ))}
               </div>
 
-              <div className="mt-8 pt-6 border-t border-stone-700 space-y-3">
-                <div className="flex justify-between text-stone-400 font-light">
+              <div className="mt-8 pt-6 border-t border-amber-900/20 space-y-3">
+                <div className="flex justify-between text-stone-600 font-light">
                   <span>Sous-total</span>
                   <span>{subtotal.toFixed(2)} CHF</span>
                 </div>
 
                 {discountAmount > 0 && (
-                  <div className="flex justify-between text-green-400">
+                  <div className="flex justify-between text-green-700">
                     <span>Remise ({appliedPromo?.percentage}%)</span>
                     <span>−{discountAmount.toFixed(2)} CHF</span>
                   </div>
                 )}
 
-                <div className="flex justify-between text-stone-400 font-light">
+                <div className="flex justify-between text-stone-600 font-light">
                   <span>Livraison</span>
                   {shippingCost === 0
-                    ? <span className="text-green-400">Gratuite ✓</span>
+                    ? <span className="text-green-700">Gratuite ✓</span>
                     : <span>{shippingCost.toFixed(2)} CHF</span>
                   }
                 </div>
 
-                <div className="flex justify-between items-center pt-4 border-t border-stone-700">
-                  <span className="text-lg font-serif italic text-amber-200">Total</span>
-                  <span className="text-2xl font-serif text-amber-400">{finalTotal.toFixed(2)} CHF</span>
+                <div className="flex justify-between items-center pt-4 border-t border-amber-900/20">
+                  <span className="text-lg font-serif italic text-stone-800">Total</span>
+                  <span className="text-2xl font-serif text-[#8D6E63]">{finalTotal.toFixed(2)} CHF</span>
                 </div>
 
                 <button
                   onClick={handleCheckout}
                   disabled={isLoading}
-                  className="w-full mt-4 py-4 bg-amber-200 text-stone-900 rounded-full text-xs tracking-widest uppercase font-bold hover:bg-white transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full mt-4 py-4 bg-purple-400 text-white rounded-full text-xs tracking-widest uppercase font-bold hover:bg-purple-500 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? 'Redirection…' : 'Procéder au paiement'}
                 </button>
-                <p className="text-center text-[10px] text-stone-500 mt-3 uppercase tracking-wider">
+                <p className="text-center text-[10px] text-stone-400 mt-3 uppercase tracking-wider">
                   Paiement sécurisé via Stripe
                 </p>
               </div>

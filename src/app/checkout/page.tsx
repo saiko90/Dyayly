@@ -72,22 +72,29 @@ export default function CheckoutPage() {
   const handleApplyPromo = async () => {
     const code = promoInput.toUpperCase().trim();
     if (!code) return;
-    if (!email) {
-      toast.error('Saisissez d\'abord votre email pour valider un code promo.');
+
+    if (!email.trim()) {
+      toast.error('Veuillez saisir votre e-mail pour tester un code promo.');
       return;
     }
+
+    // Réinitialise toute remise précédente avant de re-valider
+    setAppliedPromo(null);
     setCheckingPromo(true);
+
     try {
       const res = await fetch('/api/validate-promo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code, email }),
+        body: JSON.stringify({ code, email: email.trim() }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
+        // Affiche l'erreur exacte renvoyée par le serveur en rouge
         toast.error(data.error || 'Code promo invalide.');
+        // appliedPromo est déjà null — aucune remise appliquée
         return;
       }
 

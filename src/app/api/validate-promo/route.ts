@@ -12,45 +12,56 @@ export async function POST(req: Request) {
   try {
     const { code, email } = await req.json();
 
-    if (!code || !email) {
-      return NextResponse.json({ error: 'Code et email requis.' }, { status: 400 });
+    if (!code) {
+      return NextResponse.json({ error: 'Code manquant.' }, { status: 400 });
+    }
+    if (!email) {
+      return NextResponse.json({ error: 'Veuillez saisir votre e-mail pour tester un code.' }, { status: 400 });
     }
 
     const supabase = getAdminClient();
-    const normalizedCode = code.toUpperCase().trim();
+    const normalizedCode = String(code).toUpperCase().trim();
+    const normalizedEmail = String(email).toLowerCase().trim();
 
-    // 1. Le code existe-t-il ?
-    const { data: promo } = await supabase
+    // ── 1. Le code existe-t-il ? ──────────────────────────────────────
+    const { data: promo, error: promoError } = await supabase
       .from('promo_codes')
-      .select('*')
+      .select('code, percentage, is_active')
       .eq('code', normalizedCode)
       .single();
 
-    if (!promo) {
+    if (promoError || !promo) {
       return NextResponse.json({ error: "Ce code promo n'existe pas." }, { status: 404 });
     }
 
-    // 2. Est-il actif ?
+    // ── 2. Est-il actif ? ─────────────────────────────────────────────
     if (promo.is_active === false) {
       return NextResponse.json({ error: "Ce code promo n'est plus valide." }, { status: 400 });
     }
 
-    // 3. Déjà utilisé sur une commande PAYÉE par cet email ?
-    const { data: usedOrders } = await supabase
+    // ── 3. Déjà utilisé sur une commande payée ? ──────────────────────
+    const { count, error: countError } = await supabase
       .from('orders')
-      .select('id')
-      .eq('user_email', email)
+      .select('id', { count: 'exact', head: true })
+      .eq('user_email', normalizedEmail)
       .eq('promo_code', normalizedCode)
       .eq('status', 'paid');
 
-    if (usedOrders && usedOrders.length > 0) {
+    if (countError) {
+      // Impossible de vérifier → on bloque par sécurité
+      console.error('[validate-promo] Erreur lecture orders:', countError.message);
+      return NextResponse.json({ error: 'Impossible de valider ce code pour le moment. Réessayez.' }, { status: 500 });
+    }
+
+    if (count !== null && count > 0) {
       return NextResponse.json({ error: 'Vous avez déjà utilisé ce code promo.' }, { status: 400 });
     }
 
-    // 4. Tout est bon
-    return NextResponse.json({ percentage: promo.percentage, code: promo.code }, { status: 200 });
+    // ── 4. Tout est bon ───────────────────────────────────────────────
+    return NextResponse.json({ code: promo.code, percentage: promo.percentage }, { status: 200 });
 
   } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Erreur serveur.' }, { status: 500 });
+    console.error('[validate-promo] Erreur inattendue:', error.message);
+    return NextResponse.json({ error: 'Erreur serveur.' }, { status: 500 });
   }
 }

@@ -33,6 +33,26 @@ export default function CheckoutPage() {
 
   useEffect(() => setMounted(true), []);
 
+  // ── Invalidation du code promo si l'email change ─────────────
+  const [emailSnapshot, setEmailSnapshot] = useState('');
+  useEffect(() => {
+    if (!appliedPromo) {
+      setEmailSnapshot(email);
+      return;
+    }
+    // L'email a changé après qu'un code a été appliqué
+    if (email !== emailSnapshot && emailSnapshot !== '') {
+      setAppliedPromo(null);
+      setPromoInput('');
+      toast('Code promo retiré — veuillez le re-valider avec votre nouvel e-mail.', {
+        icon: '⚠️',
+        style: { background: '#FDF3E8', color: '#7A4E2D', border: '1px solid #C4956A' },
+      });
+    }
+    setEmailSnapshot(email);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [email]);
+
   // ── Calculs dynamiques ───────────────────────────────────────
   const subtotal = totalPrice();
 

@@ -222,7 +222,7 @@ export default function ProductModal({ product, onClose }: Props) {
                   <p className="text-[10px] uppercase tracking-widest text-[#8B5E3C] mb-2.5 font-semibold">
                     {label}
                     {!selectedVariants[label] && (
-                      <span className="ml-2 text-amber-500 normal-case tracking-normal font-light">— sélectionner</span>
+                      <span className="ml-2 text-purple-400 normal-case tracking-normal font-light">— sélectionner</span>
                     )}
                   </p>
                   <div className="flex flex-wrap gap-2">

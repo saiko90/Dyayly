@@ -77,8 +77,8 @@ export default function Home() {
           </p>
         </button>
         {/* Ligne mots-clés */}
-        <div className="flex items-center justify-center py-1 bg-white/80 backdrop-blur-sm border-b border-purple-100/60">
-          <p className="text-[10px] md:text-[11px] tracking-[0.2em] text-purple-500 font-light">
+        <div className="flex items-center justify-center py-2 bg-white/80 backdrop-blur-sm border-b border-purple-100/60">
+          <p className="text-base md:text-lg font-medium text-purple-500 tracking-wide">
             🧚‍♀️ Créativité&nbsp;&nbsp;·&nbsp;&nbsp;✨ Éveil&nbsp;&nbsp;·&nbsp;&nbsp;🌙 Positivité
           </p>
         </div>

@@ -73,7 +73,7 @@ export default function Navbar() {
           >
             <ShoppingBag className="w-5 h-5" />
             {mounted && items.length > 0 && (
-              <span className="absolute top-0 right-0 bg-amber-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+              <span className="absolute top-0 right-0 bg-purple-400 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
                 {items.length}
               </span>
             )}

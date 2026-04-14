@@ -163,12 +163,12 @@ export default function BoutiquePage() {
       <section className="relative z-10 px-4 md:px-6 max-w-6xl mx-auto mb-32">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-serif italic text-stone-800">Le Soin & L'Envoi</h2>
-          <div className="h-px w-16 bg-amber-300 mx-auto mt-6" />
+          <div className="h-px w-16 bg-purple-400 mx-auto mt-6" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="bg-white/40 backdrop-blur-md p-8 rounded-[2rem] border border-white/50 shadow-sm">
             <h4 className="text-xl font-serif italic text-stone-800 mb-6 flex items-center gap-3">
-              <HeartHandshake className="text-amber-600 w-5 h-5" /> Conseils d'entretien
+              <HeartHandshake className="text-purple-400 w-5 h-5" /> Conseils d'entretien
             </h4>
             <ul className="space-y-5 text-sm font-light text-stone-600">
               <li className="flex items-center gap-3"><Droplet className="w-4 h-4 text-purple-400 shrink-0" /> Évite le contact avec l'eau (douche, piscine).</li>
@@ -179,7 +179,7 @@ export default function BoutiquePage() {
 
           <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} transition={{ delay: 0.2 }} className="bg-white/40 backdrop-blur-md p-8 rounded-[2rem] border border-white/50 shadow-sm">
             <h4 className="text-xl font-serif italic text-stone-800 mb-6 flex items-center gap-3">
-              <Wind className="text-amber-600 w-5 h-5" /> Expédition Douce
+              <Wind className="text-purple-400 w-5 h-5" /> Expédition Douce
             </h4>
             <p className="text-sm font-light text-stone-600 leading-relaxed mb-4">Chaque bijou est soigneusement emballé dans du papier bulle pour voyager en toute sécurité jusqu'à toi.</p>
             <div className="bg-amber-100/50 rounded-xl p-4 mt-4">
@@ -190,7 +190,7 @@ export default function BoutiquePage() {
 
           <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} transition={{ delay: 0.4 }} className="bg-white/40 backdrop-blur-md p-8 rounded-[2rem] border border-white/50 shadow-sm">
             <h4 className="text-xl font-serif italic text-stone-800 mb-6 flex items-center gap-3">
-              <ShieldAlert className="text-amber-600 w-5 h-5" /> Politique
+              <ShieldAlert className="text-purple-400 w-5 h-5" /> Politique
             </h4>
             <p className="text-sm font-light text-stone-600 leading-relaxed mb-6">Mes bijoux sont faits main avec soin et passion. Pour cette raison, et pour garantir l'unicité de chaque pièce, je n'accepte ni retour ni échange.</p>
             <p className="text-sm font-medium text-purple-800/70 italic text-center mt-auto">Merci de soutenir l'artisanat local et le fait main.</p>

@@ -120,7 +120,7 @@ export default function Home() {
           className="text-center mt-12 z-20"
         >
           <p
-            className="text-xl md:text-2xl font-light text-[#8B5E3C] mb-6"
+            className="text-3xl md:text-4xl font-light text-[#8B5E3C] mb-6"
             style={{ fontFamily: 'var(--font-el-messiri), serif' }}
           >
             L'amour tissé en bijoux
@@ -158,7 +158,7 @@ export default function Home() {
       <section className="py-24 px-6 max-w-7xl mx-auto z-10 relative">
         <div className="text-center mb-16">
           <h2
-            className="text-4xl italic text-amber-700 mb-6"
+            className="text-5xl italic text-amber-700 mb-6"
             style={{ fontFamily: 'var(--font-el-messiri), serif' }}
           >
             Best sellers

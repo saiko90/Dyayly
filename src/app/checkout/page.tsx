@@ -101,6 +101,7 @@ export default function CheckoutPage() {
       setAppliedPromo({ code: data.code, percentage: data.percentage });
       toast.success(`Code "${data.code}" appliqué — −${data.percentage}% ! ✨`);
     } catch {
+      setAppliedPromo(null); // retire toute remise en cas d'erreur réseau
       toast.error('Impossible de vérifier le code. Réessayez.');
     } finally {
       setCheckingPromo(false);

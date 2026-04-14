@@ -1,12 +1,10 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-function getAdminClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  );
-}
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+);
 
 export async function POST(req: Request) {
   try {
@@ -19,15 +17,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Veuillez saisir votre e-mail pour tester un code.' }, { status: 400 });
     }
 
-    const supabase = getAdminClient();
-    const normalizedCode = String(code).toUpperCase().trim();
-    const normalizedEmail = String(email).toLowerCase().trim();
-
     // ── 1. Le code existe-t-il ? ──────────────────────────────────────
-    const { data: promo, error: promoError } = await supabase
+    const { data: promo, error: promoError } = await supabaseAdmin
       .from('promo_codes')
       .select('code, percentage, is_active')
-      .eq('code', normalizedCode)
+      .ilike('code', code.trim())
       .single();
 
     if (promoError || !promo) {
@@ -40,21 +34,20 @@ export async function POST(req: Request) {
     }
 
     // ── 3. Déjà utilisé sur une commande payée ? ──────────────────────
-    const { count, error: countError } = await supabase
+    const { count, error: countError } = await supabaseAdmin
       .from('orders')
-      .select('id', { count: 'exact', head: true })
-      .eq('user_email', normalizedEmail)
-      .eq('promo_code', normalizedCode)
-      .eq('status', 'paid');
+      .select('*', { count: 'exact', head: true })
+      .ilike('user_email', email.trim())
+      .ilike('promo_code', code.trim())
+      .in('status', ['paid', 'PAID', 'completed', 'complete']);
 
     if (countError) {
-      // Impossible de vérifier → on bloque par sécurité
-      console.error('[validate-promo] Erreur lecture orders:', countError.message);
-      return NextResponse.json({ error: 'Impossible de valider ce code pour le moment. Réessayez.' }, { status: 500 });
+      console.error('[validate-promo] Erreur Supabase lors de la vérification du code:', countError);
+      return NextResponse.json({ error: 'Erreur serveur lors de la vérification.' }, { status: 500 });
     }
 
-    if (count !== null && count > 0) {
-      return NextResponse.json({ error: 'Vous avez déjà utilisé ce code promo.' }, { status: 400 });
+    if (count && count > 0) {
+      return NextResponse.json({ error: 'Vous avez déjà profité de cette offre avec cette adresse e-mail.' }, { status: 400 });
     }
 
     // ── 4. Tout est bon ───────────────────────────────────────────────

@@ -40,16 +40,20 @@ export async function POST(req: Request) {
 
     // ── 2. Vérification code promo côté serveur (filet de sécurité) ──────
     if (promoCode && userEmail) {
-      const normalizedCode = promoCode.toUpperCase().trim();
-      const { data: usedOrders } = await supabase
+      const { count: usedCount, error: usedError } = await supabase
         .from('orders')
-        .select('id')
-        .eq('user_email', userEmail)
-        .eq('promo_code', normalizedCode)
-        .eq('status', 'paid');
+        .select('*', { count: 'exact', head: true })
+        .ilike('user_email', userEmail.trim())
+        .ilike('promo_code', promoCode.trim())
+        .in('status', ['paid', 'PAID', 'completed', 'complete']);
 
-      if (usedOrders && usedOrders.length > 0) {
-        return NextResponse.json({ error: 'Vous avez déjà utilisé ce code promo.' }, { status: 400 });
+      if (usedError) {
+        console.error('[checkout] Erreur Supabase lors de la vérification du code:', usedError);
+        return NextResponse.json({ error: 'Erreur serveur lors de la vérification du code promo.' }, { status: 500 });
+      }
+
+      if (usedCount && usedCount > 0) {
+        return NextResponse.json({ error: 'Vous avez déjà profité de cette offre avec cette adresse e-mail.' }, { status: 400 });
       }
     }
 

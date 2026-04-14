@@ -30,50 +30,42 @@ export async function POST(req: Request) {
     const session = event.data.object as Stripe.Checkout.Session;
     const orderId = session.metadata?.order_id;
 
+    // 1. Sécuriser l'ID — arrêt immédiat si absent
     if (!orderId) {
-      return NextResponse.json({ received: true });
+      console.error('[webhook] ❌ order_id absent des metadata Stripe. Session:', session.id);
+      return NextResponse.json({ error: 'Pas order_id' }, { status: 400 });
     }
 
     try {
       const { createClient } = await import('@supabase/supabase-js');
-      const supabase = createClient(
+      const supabaseAdmin = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SUPABASE_SERVICE_ROLE_KEY!,
       );
 
-      // 1. Récupérer la commande complète
-      const { data: order, error: fetchError } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('id', orderId)
-        .single();
-
-      if (fetchError || !order) {
-        console.error('Commande introuvable:', orderId);
-        return NextResponse.json({ received: true });
-      }
-
-      // 2. Mettre à jour le statut → 'paid'
-      const { error: updateError } = await supabase
+      // 2. UPDATE + SELECT en une seule requête — vérifie que la ligne a bien été modifiée
+      const { data: updatedOrder, error: updateError } = await supabaseAdmin
         .from('orders')
         .update({
-          status: 'paid',
+          status:            'paid',
           stripe_session_id: session.id,
         })
-        .eq('id', orderId);
+        .eq('id', orderId)
+        .select()
+        .single();
 
-      if (updateError) {
-        console.error('[webhook] Échec UPDATE commande', orderId, ':', updateError.message, updateError);
-        // On continue quand même pour envoyer l'email, mais l'erreur est loguée
-      } else {
-        console.log('[webhook] Commande', orderId, 'passée en paid ✓');
+      if (updateError || !updatedOrder) {
+        console.error('❌ ÉCHEC CRITIQUE UPDATE. Erreur:', updateError, 'OrderId cherché:', orderId);
+        return NextResponse.json({ error: 'Update Supabase a retourné 0 ligne.' }, { status: 500 });
       }
 
-      // 3. Générer et envoyer la facture par email
-      await sendInvoiceEmail(order, session);
+      console.log('[webhook] ✓ Commande', orderId, 'passée en paid.');
+
+      // 3. Email uniquement si l'UPDATE a réussi
+      await sendInvoiceEmail(updatedOrder, session);
 
     } catch (err: any) {
-      console.error('Erreur traitement webhook:', err.message);
+      console.error('[webhook] Erreur traitement:', err.message);
     }
   }
 

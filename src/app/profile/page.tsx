@@ -70,7 +70,7 @@ export default function ProfilePage() {
           <div className="mt-8">
             <Link
               href="/admin"
-              className="flex items-center justify-center gap-3 w-full py-4 bg-[#5C3D1E] text-amber-100 rounded-2xl text-xs tracking-widest uppercase font-medium hover:bg-[#7A4E2D] transition shadow-lg"
+              className="flex items-center justify-center gap-3 w-full py-4 bg-purple-400 text-white rounded-2xl text-xs tracking-widest uppercase font-medium hover:bg-purple-500 transition shadow-lg"
             >
               <span>⚙</span>
               Accéder au Dashboard

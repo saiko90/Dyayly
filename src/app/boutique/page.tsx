@@ -109,7 +109,7 @@ export default function BoutiquePage() {
                     <div>
                       <h3 className="text-xl font-serif italic text-stone-800 mb-1">{product.title}</h3>
                       {product.description && (
-                        <p className="text-xs text-amber-900/70 font-light uppercase tracking-widest leading-relaxed line-clamp-2">
+                        <p className="text-sm text-stone-900 font-light leading-relaxed line-clamp-2">
                           {product.description}
                         </p>
                       )}

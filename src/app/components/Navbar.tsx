@@ -133,10 +133,15 @@ export default function Navbar() {
               </div>
               
               <div className="p-8 bg-stone-50 border-t border-stone-200 mt-auto">
-                <p className="text-[10px] uppercase tracking-[0.3em] text-stone-500 mb-2">Suivez-nous</p>
-                <a href="https://www.instagram.com/dyayly555?igsh=MW91YXRwNWRzZ2k5bA==" target="_blank" className="text-sm font-light text-stone-800 hover:text-purple-500 transition">
-                  @dyayly555
-                </a>
+                <p className="text-[10px] uppercase tracking-[0.3em] text-stone-500 mb-3">Suivez-nous</p>
+                <div className="flex flex-col gap-2">
+                  <a href="https://www.instagram.com/dyayly555?igsh=MW91YXRwNWRzZ2k5bA==" target="_blank" rel="noopener noreferrer" className="text-sm font-light text-stone-800 hover:text-purple-500 transition">
+                    Instagram — @dyayly555
+                  </a>
+                  <a href="https://www.tiktok.com/@dyayly555?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" className="text-sm font-light text-stone-800 hover:text-purple-500 transition">
+                    TikTok — @dyayly555
+                  </a>
+                </div>
               </div>
             </motion.div>
           </>

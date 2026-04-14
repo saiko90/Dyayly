@@ -51,7 +51,7 @@ function SuccessContent() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: 'spring', damping: 14, stiffness: 200, delay: 0.2 }}
-              className="mx-auto mb-8 w-20 h-20 rounded-full bg-gradient-to-br from-amber-200 to-amber-400 flex items-center justify-center shadow-lg"
+              className="mx-auto mb-8 w-20 h-20 rounded-full bg-gradient-to-br from-purple-200 to-purple-400 flex items-center justify-center shadow-lg"
             >
               <motion.svg
                 initial={{ pathLength: 0, opacity: 0 }}
@@ -87,7 +87,7 @@ function SuccessContent() {
                   {greeting} ✨
                 </h1>
               )}
-              <div className="h-px w-20 bg-amber-300 mx-auto mt-4 mb-6" />
+              <div className="h-px w-20 bg-purple-300 mx-auto mt-4 mb-6" />
             </motion.div>
 
             {/* Infos commande */}
@@ -96,7 +96,7 @@ function SuccessContent() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.6 }}
-                className="mb-6 inline-block px-5 py-2.5 bg-amber-50 border border-amber-200 rounded-full"
+                className="mb-6 inline-block px-5 py-2.5 bg-purple-400/10 border border-purple-300/50 rounded-full"
               >
                 <p className="text-xs font-mono tracking-widest text-[#7A4E2D] uppercase">
                   Commande #{info.orderRef}
@@ -166,7 +166,7 @@ export default function SuccessPage() {
   return (
     <Suspense fallback={
       <main className="min-h-screen bg-[#FDFBF7] flex items-center justify-center">
-        <div className="w-8 h-8 rounded-full border-4 border-amber-300 border-t-transparent animate-spin" />
+        <div className="w-8 h-8 rounded-full border-4 border-purple-300 border-t-transparent animate-spin" />
       </main>
     }>
       <SuccessContent />

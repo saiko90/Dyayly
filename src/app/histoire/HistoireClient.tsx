@@ -88,7 +88,7 @@ export default function HistoireClient({ content }: { content: HistoireContent }
           <motion.div variants={fadeUp}>
             <Link
               href="/boutique"
-              className="inline-block px-10 py-4 bg-stone-900 text-purple-100 rounded-full text-xs tracking-[0.2em] uppercase font-medium hover:bg-stone-800 transition-colors shadow-xl hover:shadow-2xl hover:-translate-y-1 transform duration-300"
+              className="inline-block px-10 py-4 bg-purple-400 text-white rounded-full text-xs tracking-[0.2em] uppercase font-medium hover:bg-purple-500 transition-colors shadow-xl hover:shadow-2xl hover:-translate-y-1 transform duration-300"
             >
               Découvrir les créations
             </Link>

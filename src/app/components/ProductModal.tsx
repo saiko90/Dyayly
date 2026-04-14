@@ -213,7 +213,7 @@ export default function ProductModal({ product, onClose }: Props) {
 
               {/* Description */}
               {product.description && (
-                <p className="text-sm font-light text-amber-900/80 leading-relaxed">{product.description}</p>
+                <p className="text-base font-light text-stone-900 leading-relaxed">{product.description}</p>
               )}
 
               {/* ── Sélecteurs de variantes ── */}

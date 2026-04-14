@@ -3,6 +3,12 @@
 import { motion } from 'framer-motion';
 import { Mail, Phone, Instagram } from 'lucide-react';
 
+const TikTokIcon = ({ className }: { className?: string }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.73a8.16 8.16 0 0 0 4.79 1.52V7.79a4.85 4.85 0 0 1-1.02-.1z" />
+  </svg>
+);
+
 const ContactItem = ({ icon: Icon, label, value, href = '#' }: { icon: any, label: string, value: string, href?: string }) => (
   <motion.a
     href={href}
@@ -41,6 +47,7 @@ export default function GlassContacts() {
         <h3 className="text-3xl font-serif mb-10 text-center italic text-stone-800">Se connecter</h3>
         
         <ContactItem icon={Instagram} label="Instagram" value="@dyayly555" href="https://www.instagram.com/dyayly555?igsh=MW91YXRwNWRzZ2k5bA==" />
+        <ContactItem icon={TikTokIcon} label="TikTok" value="@dyayly555" href="https://www.tiktok.com/@dyayly555?is_from_webapp=1&sender_device=pc" />
         <ContactItem icon={Phone} label="Téléphone" value="+41 78 729 36 56" />
         <ContactItem icon={Mail} label="Email" value="contact@dyayly.ch" />
       </div>

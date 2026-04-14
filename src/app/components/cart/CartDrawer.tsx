@@ -37,7 +37,7 @@ export default function CartDrawer() {
           >
             <div className="flex items-center justify-between p-6 border-b border-stone-200">
               <h2 className="text-2xl font-serif italic text-stone-800 flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5 text-amber-600" />
+                <ShoppingBag className="w-5 h-5 text-purple-400" />
                 Ton Panier
               </h2>
               <button onClick={toggleDrawer} className="p-2 hover:bg-stone-100 rounded-full transition">
@@ -101,12 +101,12 @@ export default function CartDrawer() {
               <div className="p-6 border-t border-stone-200 bg-white">
                 <div className="flex justify-between items-center mb-6">
                   <span className="text-stone-600 font-light uppercase tracking-widest text-xs">Total estimé</span>
-                  <span className="text-2xl font-serif text-amber-800">{totalPrice()} CHF</span>
+                  <span className="text-2xl font-serif text-[#8D6E63]">{totalPrice()} CHF</span>
                 </div>
                 <Link 
                   href="/checkout" 
                   onClick={toggleDrawer}
-                  className="w-full py-4 bg-stone-900 text-amber-100 rounded-full text-xs tracking-[0.2em] uppercase font-medium hover:bg-stone-800 transition-colors shadow-xl flex justify-center items-center gap-2"
+                  className="w-full py-4 bg-purple-400 text-white rounded-full text-xs tracking-[0.2em] uppercase font-medium hover:bg-purple-500 transition-colors shadow-xl flex justify-center items-center gap-2"
                 >
                   <ShoppingBag className="w-4 h-4" /> Valider ma commande
                 </Link>

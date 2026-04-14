@@ -82,7 +82,7 @@ export default function Home() {
             className="text-base md:text-lg font-light text-purple-500 tracking-wide"
             style={{ fontFamily: 'var(--font-el-messiri), serif' }}
           >
-            🧚‍♀️ Créativité&nbsp;&nbsp;·&nbsp;&nbsp;✨ Éveil&nbsp;&nbsp;·&nbsp;&nbsp;🌙 Positivité
+            🧚‍♀️ Créativité&nbsp;&nbsp;·&nbsp;&nbsp;✨ Eveil&nbsp;&nbsp;·&nbsp;&nbsp;Positivité 🌕
           </p>
         </div>
       </div>
@@ -180,7 +180,7 @@ export default function Home() {
                           {product.title}
                         </h3>
                         {product.description && (
-                          <p className="text-xs text-amber-900/70 font-light leading-relaxed line-clamp-2">
+                          <p className="text-sm text-stone-900 font-light leading-relaxed line-clamp-2">
                             {product.description}
                           </p>
                         )}

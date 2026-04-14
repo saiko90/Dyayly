@@ -57,7 +57,7 @@ export async function POST(req: Request) {
                 <tr>
                   <td style="background:#F9F5F0; padding:24px 48px; text-align:center; border-top: 1px solid #EDE8E0;">
                     <p style="margin:0; font-size:10px; color:#A67C52; letter-spacing:0.25em; text-transform:uppercase; font-family: sans-serif;">
-                      Dyayly — Genève, Suisse
+                      Dyayly — Valleyres-sous-montagny, Suisse
                     </p>
                     <p style="margin:8px 0 0; font-size:10px; color:#C4A882; font-family: sans-serif;">
                       Vous recevez cet email car vous êtes inscrit(e) à la liste Dyayly.

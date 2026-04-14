@@ -28,7 +28,7 @@ export default function Home() {
       });
   }, []);
 
-  const handleSubscribe = async (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!email) return;
     try {
@@ -38,17 +38,18 @@ export default function Home() {
         body: JSON.stringify({ email }),
       });
 
-      if (res.status === 409) {
-        toast('Vous êtes déjà inscrit(e) à notre newsletter ! ✨', {
-          icon: '💌',
-          style: { background: '#FDF3E8', color: '#7A4E2D', border: '1px solid #C4956A' },
-        });
-        return; // Ne pas fermer le modal ni vider le champ
-      }
+      const data = await res.json();
 
       if (!res.ok) {
-        toast.error('Une erreur est survenue. Réessayez dans un instant.');
-        return;
+        if (data.error === 'already_subscribed') {
+          toast('Cet e-mail est déjà inscrit à notre newsletter ! ✨', {
+            icon: '💌',
+            style: { background: '#FDF3E8', color: '#7A4E2D', border: '1px solid #C4956A' },
+          });
+        } else {
+          toast.error('Une erreur est survenue. Réessayez dans un instant.');
+        }
+        return; // Dans tous les cas d'erreur : ne pas fermer le modal
       }
 
       toast.success('Inscrit(e) avec succès ! Votre code BIENVENUE15 vous a été envoyé par email.', {

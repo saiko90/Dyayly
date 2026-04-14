@@ -111,7 +111,15 @@ export default function CheckoutPage() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Erreur lors de la commande');
+
+      if (!res.ok) {
+        // Si le serveur rejette le code promo, on le retire visuellement
+        if (data.error?.includes('code promo')) {
+          setAppliedPromo(null);
+          setPromoInput('');
+        }
+        throw new Error(data.error || 'Erreur lors de la commande');
+      }
 
       clearCart();
       window.location.href = data.url;

@@ -1,4 +1,12 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+
+function getAdminClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  );
+}
 
 export async function POST(req: Request) {
   try {
@@ -8,13 +16,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Code et email requis.' }, { status: 400 });
     }
 
-    const { supabase } = await import('@/lib/supabase');
+    const supabase = getAdminClient();
+    const normalizedCode = code.toUpperCase().trim();
 
     // 1. Le code existe-t-il ?
     const { data: promo } = await supabase
       .from('promo_codes')
       .select('*')
-      .eq('code', code.toUpperCase().trim())
+      .eq('code', normalizedCode)
       .single();
 
     if (!promo) {
@@ -26,12 +35,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Ce code promo n'est plus valide." }, { status: 400 });
     }
 
-    // 3. Déjà utilisé par cet email ?
+    // 3. Déjà utilisé sur une commande PAYÉE par cet email ?
     const { data: usedOrders } = await supabase
       .from('orders')
       .select('id')
       .eq('user_email', email)
-      .eq('promo_code', code.toUpperCase().trim());
+      .eq('promo_code', normalizedCode)
+      .eq('status', 'paid');
 
     if (usedOrders && usedOrders.length > 0) {
       return NextResponse.json({ error: 'Vous avez déjà utilisé ce code promo.' }, { status: 400 });

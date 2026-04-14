@@ -264,7 +264,7 @@ async function sendInvoiceEmail(order: any, session: Stripe.Checkout.Session) {
               <tr>
                 <td style="background:#F9F5F0; padding:24px 48px; text-align:center; border-top: 1px solid #EDE8E0;">
                   <p style="margin:0; font-size:10px; color:#A67C52; letter-spacing:0.25em; text-transform:uppercase; font-family: sans-serif;">
-                    Dyayly — Genève, Suisse · contact@dyayly.ch
+                    Dyayly — Valleyres-sous-montagny, Suisse · contact@dyayly.ch
                   </p>
                 </td>
               </tr>

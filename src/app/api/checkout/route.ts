@@ -38,7 +38,22 @@ export async function POST(req: Request) {
       .from('analytics')
       .insert([{ event_type: 'order', page_path: '/checkout' }]);
 
-    // ── 2. Insertion commande (service role → bypass RLS) ──────────────
+    // ── 2. Vérification code promo côté serveur (filet de sécurité) ──────
+    if (promoCode && userEmail) {
+      const normalizedCode = promoCode.toUpperCase().trim();
+      const { data: usedOrders } = await supabase
+        .from('orders')
+        .select('id')
+        .eq('user_email', userEmail)
+        .eq('promo_code', normalizedCode)
+        .eq('status', 'paid');
+
+      if (usedOrders && usedOrders.length > 0) {
+        return NextResponse.json({ error: 'Vous avez déjà utilisé ce code promo.' }, { status: 400 });
+      }
+    }
+
+    // ── 3. Insertion commande (service role → bypass RLS) ──────────────
     const { data: orderData, error: orderError } = await supabase
       .from('orders')
       .insert([{

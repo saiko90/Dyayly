@@ -277,7 +277,7 @@ export default function ProductModal({ product, onClose }: Props) {
               </button>
 
               <p className="text-center text-[10px] text-stone-400 mt-3 uppercase tracking-wider">
-                Fait main avec amour · Genève
+                Fait main avec amour · Valleyres-sous-montagny
               </p>
             </div>
           </div>

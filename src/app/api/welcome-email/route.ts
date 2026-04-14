@@ -11,19 +11,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Email manquant' }, { status: 400 });
     }
 
-    // ── Insertion dans la table subscribers ────────────────────────────
-    const { supabase } = await import('@/lib/supabase');
+    // ── Insertion dans la table subscribers (client admin → bypass RLS) ──
+    const { createClient } = await import('@supabase/supabase-js');
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    );
+
     const { error: dbError } = await supabase
       .from('subscribers')
       .insert([{ email }]);
 
     if (dbError) {
-      // Code 23505 = violation de contrainte UNIQUE (email déjà enregistré)
+      // Code 23505 = violation de contrainte UNIQUE → doublon, on bloque tout
       if (dbError.code === '23505') {
-        return NextResponse.json({ error: 'already_subscribed' }, { status: 409 });
+        return NextResponse.json({ error: 'already_subscribed' }, { status: 400 });
       }
-      // Autre erreur DB — on laisse passer et on envoie quand même l'email
+      // Autre erreur inattendue → on bloque aussi par sécurité
       console.error('Supabase subscribers insert error:', dbError.message);
+      return NextResponse.json({ error: 'Erreur lors de l\'inscription.' }, { status: 500 });
     }
 
     const html = `
@@ -98,7 +104,7 @@ export async function POST(req: Request) {
                 <tr>
                   <td style="background:#F9F5F0; padding:24px 48px; text-align:center; border-top: 1px solid #EDE8E0;">
                     <p style="margin:0; font-size:10px; color:#A67C52; letter-spacing:0.25em; text-transform:uppercase; font-family: sans-serif;">
-                      Dyayly — Genève, Suisse
+                      Dyayly — Valleyres-sous-montagny, Suisse
                     </p>
                     <p style="margin:8px 0 0; font-size:10px; color:#C4A882; font-family: sans-serif;">
                       Vous recevez cet email car vous venez de vous inscrire à la newsletter Dyayly.

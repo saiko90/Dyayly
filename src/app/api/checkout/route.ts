@@ -123,12 +123,25 @@ export async function POST(req: Request) {
     }
 
     // ── 5. Session Stripe ──────────────────────────────────────────────
-    // Priorité : variable explicite → VERCEL_URL (auto-injecté par Vercel) → header host → localhost
+    // Priorité : NEXT_PUBLIC_SITE_URL → VERCEL_URL → host header → localhost (dev uniquement)
     const siteUrl = (() => {
-      if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
-      if (process.env.VERCEL_URL)           return `https://${process.env.VERCEL_URL}`;
+      // Toujours supprimer le slash final pour éviter les doubles-slashes
+      const explicit = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, '');
+      if (explicit) return explicit;
+
+      // VERCEL_URL est auto-injecté par Vercel (ex: dyayly.vercel.app), toujours HTTPS
+      if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+
+      // Dernier recours : host de la requête entrante
       const host = req.headers.get('host');
       if (host) return host.startsWith('localhost') ? `http://${host}` : `https://${host}`;
+
+      // En production, l'absence de l'URL est une erreur bloquante
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error(
+          '[checkout] NEXT_PUBLIC_SITE_URL est absente — configurez cette variable dans Vercel.'
+        );
+      }
       return 'http://localhost:3000';
     })();
 

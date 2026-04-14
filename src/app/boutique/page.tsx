@@ -116,7 +116,7 @@ export default function BoutiquePage() {
                     </div>
                     <div className="flex items-end justify-between border-t border-purple-200/50 pt-4 mt-4">
                       <div>
-                        <span className="text-3xl font-serif text-amber-700">{product.price}</span>
+                        <span className="text-3xl font-serif text-[#8D6E63]">{product.price}</span>
                         <span className="text-sm font-medium text-amber-900/60 ml-1">CHF</span>
                       </div>
                       <span className="text-xs text-stone-400 uppercase tracking-wider">Voir →</span>
@@ -136,20 +136,20 @@ export default function BoutiquePage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="bg-stone-900 text-stone-100 p-8 md:p-16 rounded-[2rem] md:rounded-[3rem] shadow-2xl relative overflow-hidden"
+          className="bg-[#F5E6D3] p-8 md:p-16 rounded-[2rem] md:rounded-[3rem] shadow-sm border border-[#E8D5C0] relative overflow-hidden"
         >
-          <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 blur-[100px] rounded-full pointer-events-none" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-purple-200/20 blur-[100px] rounded-full pointer-events-none" />
           <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
             <div className="space-y-6">
-              <Sparkles className="w-8 h-8 text-amber-300 mb-6" />
-              <h3 className="text-3xl font-serif italic text-amber-200">Personnalisation</h3>
-              <p className="font-light text-stone-300 leading-relaxed">
+              <Sparkles className="w-8 h-8 text-purple-400 mb-6" />
+              <h3 className="text-3xl font-serif italic text-stone-800">Personnalisation</h3>
+              <p className="font-light text-stone-600 leading-relaxed">
                 Les bijoux sont ajustables et peuvent être entièrement personnalisés (couleurs, pierres, intention). Pour toute demande particulière, je suis à ton écoute pour créer le bijou qui fera briller ton âme.
               </p>
             </div>
-            <div className="space-y-6 border-t md:border-t-0 md:border-l border-stone-700 pt-8 md:pt-0 md:pl-12">
-              <h3 className="text-3xl font-serif italic text-amber-200">Matériaux choisis</h3>
-              <ul className="space-y-4 font-light text-stone-300">
+            <div className="space-y-6 border-t md:border-t-0 md:border-l border-[#D4C0A8] pt-8 md:pt-0 md:pl-12">
+              <h3 className="text-3xl font-serif italic text-stone-800">Matériaux choisis</h3>
+              <ul className="space-y-4 font-light text-stone-600">
                 <li className="flex items-start gap-3"><span className="text-purple-400 mt-1">•</span> Fil Lithanisa ciré ou nylon polyester (tissage solide et confortable).</li>
                 <li className="flex items-start gap-3"><span className="text-purple-400 mt-1">•</span> Pierres naturelles soigneusement sélectionnées.</li>
                 <li className="flex items-start gap-3"><span className="text-purple-400 mt-1">•</span> Perles en verre, bois, acier inoxydable et laiton.</li>
@@ -184,7 +184,7 @@ export default function BoutiquePage() {
             <p className="text-sm font-light text-stone-600 leading-relaxed mb-4">Chaque bijou est soigneusement emballé dans du papier bulle pour voyager en toute sécurité jusqu'à toi.</p>
             <div className="bg-amber-100/50 rounded-xl p-4 mt-4">
               <p className="text-xs font-medium text-stone-700 uppercase tracking-wider mb-2">Frais de port</p>
-              <p className="text-sm text-stone-600">Suisse : 5 CHF · Europe : 12 CHF<br/>Gratuit dès 150 CHF d'achat ✓</p>
+              <p className="text-sm text-stone-600">Suisse 5.-<br/>France, Belgique : 12.-</p>
             </div>
           </motion.div>
 

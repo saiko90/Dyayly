@@ -28,7 +28,7 @@ export default function Home() {
       });
   }, []);
 
-  const handleSubscribe = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubscribe = async (e: { preventDefault(): void }) => {
     e.preventDefault();
     if (!email) return;
     try {
@@ -70,15 +70,18 @@ export default function Home() {
         {/* Ligne promo (cliquable) */}
         <button
           onClick={() => setIsModalOpen(true)}
-          className="flex items-center justify-center py-1.5 bg-purple-400 hover:bg-purple-500 transition-colors w-full cursor-pointer border-b border-purple-300/30"
+          className="flex items-center justify-center py-1.5 bg-purple-400/70 backdrop-blur-sm hover:bg-purple-400/85 transition-colors w-full cursor-pointer border-b border-purple-300/30"
         >
           <p className="text-[10px] md:text-xs tracking-[0.25em] uppercase font-light text-white">
             ✨&nbsp;−15% sur votre première commande en vous inscrivant à la newsletter&nbsp;✨
           </p>
         </button>
         {/* Ligne mots-clés */}
-        <div className="flex items-center justify-center py-2 bg-white/80 backdrop-blur-sm border-b border-purple-100/60">
-          <p className="text-base md:text-lg font-medium text-purple-500 tracking-wide">
+        <div className="flex items-center justify-center py-2 bg-white/75 backdrop-blur-sm border-b border-purple-100/60">
+          <p
+            className="text-base md:text-lg font-light text-purple-500 tracking-wide"
+            style={{ fontFamily: 'var(--font-el-messiri), serif' }}
+          >
             🧚‍♀️ Créativité&nbsp;&nbsp;·&nbsp;&nbsp;✨ Éveil&nbsp;&nbsp;·&nbsp;&nbsp;🌙 Positivité
           </p>
         </div>
@@ -183,7 +186,7 @@ export default function Home() {
                         )}
                       </div>
                       <div className="flex items-end justify-between mt-4 pt-4 border-t border-white/40">
-                        <span className="text-3xl font-serif text-amber-700 transition-colors">
+                        <span className="text-3xl font-serif text-[#8D6E63] transition-colors">
                           {product.price} <span className="text-lg">CHF</span>
                         </span>
                         <Link

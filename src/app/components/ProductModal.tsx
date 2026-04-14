@@ -205,7 +205,7 @@ export default function ProductModal({ product, onClose }: Props) {
 
               {/* Titre */}
               <div>
-                <p className="text-[10px] uppercase tracking-[0.3em] text-amber-600 mb-1.5 font-medium">
+                <p className="text-[10px] uppercase tracking-[0.3em] text-purple-400 mb-1.5 font-medium">
                   Dyayly — Création artisanale
                 </p>
                 <h2 className="text-3xl font-serif italic text-stone-800 leading-tight">{product.title}</h2>
@@ -258,7 +258,7 @@ export default function ProductModal({ product, onClose }: Props) {
             <div className="mt-6 pt-6 border-t border-stone-100">
               <div className="flex items-end justify-between mb-5">
                 <div>
-                  <span className="text-4xl font-serif text-amber-700">{finalPrice.toFixed(2)}</span>
+                  <span className="text-4xl font-serif text-[#8D6E63]">{finalPrice.toFixed(2)}</span>
                   <span className="text-lg text-amber-900/50 ml-1.5">CHF</span>
                 </div>
                 {groupLabels.length > 0 && !allSelected && (

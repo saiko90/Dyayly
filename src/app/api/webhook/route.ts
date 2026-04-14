@@ -54,13 +54,20 @@ export async function POST(req: Request) {
       }
 
       // 2. Mettre à jour le statut → 'paid'
-      await supabase
+      const { error: updateError } = await supabase
         .from('orders')
         .update({
           status: 'paid',
           stripe_session_id: session.id,
         })
         .eq('id', orderId);
+
+      if (updateError) {
+        console.error('[webhook] Échec UPDATE commande', orderId, ':', updateError.message, updateError);
+        // On continue quand même pour envoyer l'email, mais l'erreur est loguée
+      } else {
+        console.log('[webhook] Commande', orderId, 'passée en paid ✓');
+      }
 
       // 3. Générer et envoyer la facture par email
       await sendInvoiceEmail(order, session);

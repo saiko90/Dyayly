@@ -45,7 +45,7 @@ export default function Navbar() {
         className="fixed top-[4.5rem] md:top-20 inset-x-4 md:inset-x-0 mx-auto z-50 max-w-5xl md:max-w-fit px-6 py-4 rounded-full border border-white/40 bg-white/20 backdrop-blur-2xl shadow-lg flex justify-between items-center"
       >
         {/* Logo Mobile (visible uniquement sur petit écran) */}
-        <Link href="/" className="md:hidden font-serif italic text-lg text-stone-800 tracking-widest hover:text-purple-500 transition-colors">
+        <Link href="/" className="md:hidden font-serif italic text-base text-stone-800 tracking-widest hover:text-purple-500 transition-colors">
           Dyayly
         </Link>
 
@@ -53,7 +53,7 @@ export default function Navbar() {
         <ul className="hidden md:flex items-center gap-10 text-xs uppercase tracking-[0.2em] font-light text-stone-800">
           <li className="hover:text-purple-500 transition-colors"><Link href="/">Accueil</Link></li>
           <li className="hover:text-purple-500 transition-colors"><Link href="/histoire">Histoire</Link></li>
-          <li className="text-[15px] font-serif italic lowercase tracking-normal px-4 border-x border-stone-400 hover:text-purple-500 transition-colors">
+          <li className="text-[13px] font-serif italic lowercase tracking-normal px-4 border-x border-stone-400 hover:text-purple-500 transition-colors">
             <Link href="/">Dyayly</Link>
           </li>
           <li className="hover:text-purple-500 transition-colors"><Link href="/boutique">Boutique</Link></li>

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Package, Users, BarChart3, Mail,
-  Settings, Plus, Trash2, Edit3, Image as ImageIcon, Send, X, Upload, Tag, ShoppingBag, Menu, FileText,
+  Settings, Plus, Trash2, Edit3, Image as ImageIcon, Send, X, Upload, Tag, ShoppingBag, Menu, FileText, Star,
 } from 'lucide-react';
 import OrderCard from './OrderCard';
 import toast from 'react-hot-toast';
@@ -59,6 +59,12 @@ export default function AdminDashboard() {
   const [loadingContent,   setLoadingContent]   = useState(false);
   const [savingContent,    setSavingContent]    = useState(false);
 
+  // ── Bannière promotionnelle ────────────────────────────────
+  const [bannerText,    setBannerText]    = useState('');
+  const [bannerActive,  setBannerActive]  = useState(true);
+  const [loadingBanner, setLoadingBanner] = useState(false);
+  const [savingBanner,  setSavingBanner]  = useState(false);
+
   // ── Commandes ──────────────────────────────────────────────
   const [orders,        setOrders]        = useState<any[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
@@ -96,6 +102,38 @@ export default function AdminDashboard() {
   const fetchAnalytics = async () => {
     const { data, error } = await supabase.from('analytics').select('*');
     if (!error && data) setAnalytics(data);
+  };
+
+  // ── Bannière — chargement et sauvegarde ───────────────────
+  const fetchBanner = async () => {
+    setLoadingBanner(true);
+    try {
+      const res = await fetch('/api/admin/settings');
+      if (res.ok) {
+        const data = await res.json();
+        setBannerText(data.promo_banner_text ?? '');
+        setBannerActive(data.promo_banner_active ?? true);
+      }
+    } catch { /* ignore */ }
+    finally { setLoadingBanner(false); }
+  };
+
+  const handleSaveBanner = async (e: { preventDefault(): void }) => {
+    e.preventDefault();
+    setSavingBanner(true);
+    try {
+      const res = await fetch('/api/admin/settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ promo_banner_text: bannerText, promo_banner_active: bannerActive }),
+      });
+      if (!res.ok) throw new Error((await res.json()).error);
+      toast.success('Bannière mise à jour ! ✨');
+    } catch (err: any) {
+      toast.error(err.message || 'Erreur lors de la sauvegarde.');
+    } finally {
+      setSavingBanner(false);
+    }
   };
 
   // ── Contenu — chargement et sauvegarde ────────────────────
@@ -137,7 +175,7 @@ export default function AdminDashboard() {
   // ── Commandes — chargement à l'activation de l'onglet ─────
   useEffect(() => {
     if (activeTab === 'commandes') fetchOrders();
-    if (activeTab === 'contenu')   fetchContent();
+    if (activeTab === 'contenu') { fetchContent(); fetchBanner(); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
@@ -288,6 +326,17 @@ export default function AdminDashboard() {
       toast.error(err.message || 'Erreur lors de la sauvegarde');
     } finally {
       setSavingProduct(false);
+    }
+  };
+
+  // ── Bestseller toggle ──────────────────────────────────────
+  const handleToggleBestseller = async (id: string, current: boolean) => {
+    // Mise à jour optimiste
+    setProducts(prev => prev.map(p => p.id === id ? { ...p, is_bestseller: !current } : p));
+    const { error } = await supabase.from('products').update({ is_bestseller: !current }).eq('id', id);
+    if (error) {
+      toast.error('Impossible de modifier le statut Best Seller.');
+      setProducts(prev => prev.map(p => p.id === id ? { ...p, is_bestseller: current } : p));
     }
   };
 
@@ -851,6 +900,13 @@ export default function AdminDashboard() {
                           </td>
                           <td className="p-4 pr-6">
                             <div className="flex justify-end gap-2">
+                              <button
+                                onClick={() => handleToggleBestseller(item.id, !!item.is_bestseller)}
+                                title={item.is_bestseller ? 'Retirer des Best Sellers' : 'Marquer Best Seller'}
+                                className="p-2 bg-white rounded-lg border border-stone-200 shadow-sm transition"
+                              >
+                                <Star className={`w-4 h-4 transition-colors ${item.is_bestseller ? 'fill-purple-400 text-purple-400' : 'text-stone-300 hover:text-purple-400'}`} />
+                              </button>
                               <button onClick={() => openEditModal(item)}
                                 className="p-2 text-stone-400 hover:text-purple-500 bg-white rounded-lg border border-stone-200 shadow-sm transition">
                                 <Edit3 className="w-4 h-4" />
@@ -1284,6 +1340,63 @@ export default function AdminDashboard() {
                   </div>
                 </form>
               )}
+
+              {/* ── Bannière promotionnelle ── */}
+              <div>
+                <div className="mb-6">
+                  <h2 className="text-xl font-semibold text-stone-800">Bannière promotionnelle</h2>
+                  <p className="text-stone-500 font-light">Gérez la bannière affichée en haut de la page d'accueil.</p>
+                </div>
+
+                {loadingBanner ? (
+                  <div className="flex justify-center py-10">
+                    <div className="w-8 h-8 rounded-full border-4 border-purple-300 border-t-transparent animate-spin" />
+                  </div>
+                ) : (
+                  <form
+                    onSubmit={handleSaveBanner}
+                    className="bg-white p-8 rounded-3xl shadow-sm border border-stone-200 space-y-6"
+                  >
+                    <div>
+                      <label className="block text-xs uppercase tracking-widest text-stone-500 mb-2">
+                        Texte de la bannière
+                      </label>
+                      <input
+                        type="text"
+                        value={bannerText}
+                        onChange={e => setBannerText(e.target.value)}
+                        placeholder="✨ −15% sur votre première commande…"
+                        className="w-full p-4 rounded-xl border border-stone-200 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-purple-300 text-sm"
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-stone-700">Bannière active</p>
+                        <p className="text-xs text-stone-400 mt-0.5">Affiche ou masque la bannière sur la page d'accueil.</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setBannerActive(v => !v)}
+                        className={`relative w-12 h-6 rounded-full transition-colors duration-200 ${bannerActive ? 'bg-purple-400' : 'bg-stone-300'}`}
+                      >
+                        <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${bannerActive ? 'translate-x-6' : ''}`} />
+                      </button>
+                    </div>
+
+                    <div className="flex justify-end pt-2">
+                      <button
+                        type="submit"
+                        disabled={savingBanner}
+                        className="flex items-center gap-2 bg-purple-200 text-stone-900 font-bold px-8 py-4 rounded-full hover:bg-purple-300 transition shadow-lg text-sm uppercase tracking-wider disabled:opacity-50"
+                      >
+                        <FileText className="w-4 h-4" />
+                        {savingBanner ? 'Sauvegarde…' : 'Enregistrer la bannière'}
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
             </motion.div>
           )}
 

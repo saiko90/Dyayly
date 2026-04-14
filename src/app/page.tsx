@@ -16,16 +16,31 @@ export default function Home() {
   const [products, setProducts] = useState<any[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
 
+  // Bannière promotionnelle dynamique
+  const [bannerText,   setBannerText]   = useState('✨ −15% sur votre première commande en vous inscrivant à la newsletter ✨');
+  const [bannerActive, setBannerActive] = useState(true);
+
   useEffect(() => {
+    // Best sellers filtrés
     supabase
       .from('products')
       .select('id, title, price, images, image_url, description')
       .eq('is_online', true)
-      .limit(4)
+      .eq('is_bestseller', true)
+      .limit(6)
       .then(({ data }) => {
         if (data) setProducts(data);
         setLoadingProducts(false);
       });
+
+    // Paramètres bannière
+    fetch('/api/admin/settings')
+      .then(r => r.json())
+      .then(data => {
+        if (data.promo_banner_text)   setBannerText(data.promo_banner_text);
+        if (typeof data.promo_banner_active === 'boolean') setBannerActive(data.promo_banner_active);
+      })
+      .catch(() => {}); // garde les valeurs par défaut en cas d'erreur
   }, []);
 
   const handleSubscribe = async (e: { preventDefault(): void }) => {
@@ -67,15 +82,17 @@ export default function Home() {
     <main className="relative min-h-screen text-stone-900 selection:bg-purple-100 overflow-hidden">
       {/* TOP BAR — Bannière double */}
       <div className="fixed top-0 inset-x-0 z-[60] flex flex-col">
-        {/* Ligne promo (cliquable) */}
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="flex items-center justify-center py-1.5 bg-purple-400/70 backdrop-blur-sm hover:bg-purple-400/85 transition-colors w-full cursor-pointer border-b border-purple-300/30"
-        >
-          <p className="text-[10px] md:text-xs tracking-[0.25em] uppercase font-light text-white">
-            ✨&nbsp;−15% sur votre première commande en vous inscrivant à la newsletter&nbsp;✨
-          </p>
-        </button>
+        {/* Ligne promo (cliquable) — conditionnelle */}
+        {bannerActive && (
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center justify-center py-1.5 bg-purple-400/70 backdrop-blur-sm hover:bg-purple-400/85 transition-colors w-full cursor-pointer border-b border-purple-300/30"
+          >
+            <p className="text-[10px] md:text-xs tracking-[0.25em] uppercase font-light text-white">
+              {bannerText}
+            </p>
+          </button>
+        )}
         {/* Ligne mots-clés */}
         <div className="flex items-center justify-center py-2 bg-white/75 backdrop-blur-sm border-b border-purple-100/60">
           <p
@@ -102,7 +119,10 @@ export default function Home() {
           transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
           className="text-center mt-12 z-20"
         >
-          <p className="text-sm md:text-base font-light uppercase tracking-widest text-[#8B5E3C] mb-6">
+          <p
+            className="text-xl md:text-2xl font-light text-[#8B5E3C] mb-6"
+            style={{ fontFamily: 'var(--font-el-messiri), serif' }}
+          >
             L'amour tissé en bijoux
           </p>
           <p className="text-sm md:text-base font-light text-[#7A4E2D] max-w-md mx-auto leading-relaxed mb-12">
@@ -121,7 +141,12 @@ export default function Home() {
           viewport={{ once: true }}
           className="space-y-12"
         >
-          <h2 className="text-4xl font-serif italic text-stone-800">Révéler votre propre lumière</h2>
+          <h2
+            className="text-4xl font-serif italic text-stone-800"
+            style={{ fontFamily: 'var(--font-el-messiri), serif' }}
+          >
+            ✨ Révéler votre propre lumière ✨
+          </h2>
           <p className="text-xl md:text-2xl leading-relaxed font-light text-stone-600">
             "Chaque création porte une intention : celle de déposer un éclat de douceur, d’amour et de clarté. Des bijoux faits à la main pour accompagner les renaissances intérieures."
           </p>
@@ -133,7 +158,7 @@ export default function Home() {
       <section className="py-24 px-6 max-w-7xl mx-auto z-10 relative">
         <div className="text-center mb-16">
           <h2
-            className="text-3xl italic text-amber-700 mb-6"
+            className="text-4xl italic text-amber-700 mb-6"
             style={{ fontFamily: 'var(--font-el-messiri), serif' }}
           >
             Best sellers

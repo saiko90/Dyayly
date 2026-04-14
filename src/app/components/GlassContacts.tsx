@@ -44,7 +44,12 @@ export default function GlassContacts() {
       }}
     >
       <div className="relative z-10 space-y-8">
-        <h3 className="text-3xl font-serif mb-10 text-center italic text-stone-800">Se connecter</h3>
+        <h3
+          className="text-3xl mb-10 text-center italic text-stone-800"
+          style={{ fontFamily: 'var(--font-el-messiri), serif' }}
+        >
+          Se connecter
+        </h3>
         
         <ContactItem icon={Instagram} label="Instagram" value="@dyayly555" href="https://www.instagram.com/dyayly555?igsh=MW91YXRwNWRzZ2k5bA==" />
         <ContactItem icon={TikTokIcon} label="TikTok" value="@dyayly555" href="https://www.tiktok.com/@dyayly555?is_from_webapp=1&sender_device=pc" />

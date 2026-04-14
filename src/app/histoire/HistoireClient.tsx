@@ -82,13 +82,17 @@ export default function HistoireClient({ content }: { content: HistoireContent }
           viewport={{ once: true }}
           variants={staggerContainer}
         >
-          <motion.p variants={fadeUp} className="text-2xl md:text-4xl font-serif italic text-stone-800 mb-12">
-            Ensemble, créons, rêvons, brillons.
+          <motion.p
+            variants={fadeUp}
+            className="text-2xl md:text-4xl italic text-stone-800 mb-12"
+            style={{ fontFamily: 'var(--font-el-messiri), serif' }}
+          >
+            Ensemble créons, brillons, rêvons.
           </motion.p>
           <motion.div variants={fadeUp}>
             <Link
               href="/boutique"
-              className="inline-block px-10 py-4 bg-purple-400 text-white rounded-full text-xs tracking-[0.2em] uppercase font-medium hover:bg-purple-500 transition-colors shadow-xl hover:shadow-2xl hover:-translate-y-1 transform duration-300"
+              className="inline-block px-10 py-4 bg-transparent border border-purple-400 text-purple-400 rounded-full text-xs tracking-[0.2em] uppercase font-medium hover:bg-purple-50 transition-colors"
             >
               Découvrir les créations
             </Link>

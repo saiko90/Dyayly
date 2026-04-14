@@ -42,12 +42,9 @@ export default function BoutiquePage() {
       {/* HEADER */}
       <section className="relative pt-32 pb-16 md:pt-48 md:pb-24 px-6 max-w-4xl mx-auto text-center z-10">
         <motion.div initial="hidden" animate="show" variants={staggerContainer}>
-          <motion.span variants={fadeUp} className="text-purple-500 uppercase tracking-[0.3em] text-xs font-medium mb-4 block">
-            Les Créations
-          </motion.span>
-          <motion.h1
+<motion.h1
             variants={fadeUp}
-            className="text-4xl md:text-6xl mb-8 text-amber-700 leading-tight text-center"
+            className="text-4xl md:text-6xl mb-8 text-[#A1887F] leading-tight text-center"
             style={{ fontFamily: 'var(--font-el-messiri), serif' }}
           >
             Les Créations

@@ -55,8 +55,13 @@ export async function POST(req: Request) {
         .single();
 
       if (updateError || !updatedOrder) {
-        console.error('❌ ÉCHEC CRITIQUE UPDATE. Erreur:', updateError, 'OrderId cherché:', orderId);
-        return NextResponse.json({ error: 'Update Supabase a retourné 0 ligne.' }, { status: 500 });
+        return NextResponse.json({
+          error:                  'Échec de la mise à jour Supabase',
+          id_recherche:           orderId,
+          type_de_id:             typeof orderId,
+          erreur_supabase_brute:  updateError,
+          cle_admin_existe:       !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+        }, { status: 500 });
       }
 
       console.log('[webhook] ✓ Commande', orderId, 'passée en paid.');

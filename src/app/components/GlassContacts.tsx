@@ -3,9 +3,11 @@
 import { motion } from 'framer-motion';
 import { Mail, Phone, Instagram } from 'lucide-react';
 
-const ContactItem = ({ icon: Icon, label, value }: { icon: any, label: string, value: string }) => (
-  <motion.a 
-    href="#"
+const ContactItem = ({ icon: Icon, label, value, href = '#' }: { icon: any, label: string, value: string, href?: string }) => (
+  <motion.a
+    href={href}
+    target={href !== '#' ? '_blank' : undefined}
+    rel={href !== '#' ? 'noopener noreferrer' : undefined}
     whileHover={{ x: 10 }}
     className="flex items-center gap-4 text-stone-700 hover:text-purple-700 transition-colors group"
   >
@@ -38,7 +40,7 @@ export default function GlassContacts() {
       <div className="relative z-10 space-y-8">
         <h3 className="text-3xl font-serif mb-10 text-center italic text-stone-800">Se connecter</h3>
         
-        <ContactItem icon={Instagram} label="Instagram" value="@dyayly555" />
+        <ContactItem icon={Instagram} label="Instagram" value="@dyayly555" href="https://www.instagram.com/dyayly555?igsh=MW91YXRwNWRzZ2k5bA==" />
         <ContactItem icon={Phone} label="Téléphone" value="+41 78 729 36 56" />
         <ContactItem icon={Mail} label="Email" value="contact@dyayly.ch" />
       </div>

@@ -110,7 +110,7 @@ export default function AdminDashboard() {
     checkAuth();
   }, [router]);
 
-  const handleAdminLogin = (e: React.FormEvent) => {
+  const handleAdminLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (adminPassword === 'Dyayly2026') {
       setIsAdminAuthenticated(true);
@@ -185,7 +185,7 @@ export default function AdminDashboard() {
     });
   };
 
-  const handleSaveProduct = async (e: React.FormEvent) => {
+  const handleSaveProduct = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSavingProduct(true);
     try {
@@ -263,7 +263,7 @@ export default function AdminDashboard() {
     if (data) setPromoCodes(data);
   };
 
-  const handleAddPromo = async (e: React.FormEvent) => {
+  const handleAddPromo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const code = promoFormCode.toUpperCase().trim();
     const pct  = parseInt(promoFormPct);
@@ -308,7 +308,7 @@ export default function AdminDashboard() {
     setUploadingNlImage(false);
   };
 
-  const handleSendNewsletter = async (e: React.FormEvent) => {
+  const handleSendNewsletter = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSendingNewsletter(true);
     const toastId = toast.loading('Envoi en cours…');
@@ -477,7 +477,7 @@ export default function AdminDashboard() {
               className="flex flex-col items-center justify-center py-20 text-center space-y-6"
             >
               <div className="w-24 h-24 bg-gradient-to-tr from-amber-200 to-purple-300 rounded-full blur-xl mb-4" />
-              <h2 className="text-4xl font-serif italic text-stone-900">Bienvenue dans votre espace, Stéfanie.</h2>
+              <h2 className="text-4xl font-serif italic text-stone-900">Bienvenue dans votre espace, Stefanie.</h2>
               <p className="text-stone-500 font-light max-w-lg">
                 C'est ici que vous pouvez gérer toute la magie de Dyayly. Sélectionnez une catégorie dans le menu de gauche pour commencer.
               </p>

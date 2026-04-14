@@ -134,7 +134,7 @@ export default function Navbar() {
               
               <div className="p-8 bg-stone-50 border-t border-stone-200 mt-auto">
                 <p className="text-[10px] uppercase tracking-[0.3em] text-stone-500 mb-2">Suivez-nous</p>
-                <a href="https://instagram.com/dyayly555" target="_blank" className="text-sm font-light text-stone-800 hover:text-amber-600 transition">
+                <a href="https://www.instagram.com/dyayly555?igsh=MW91YXRwNWRzZ2k5bA==" target="_blank" className="text-sm font-light text-stone-800 hover:text-amber-600 transition">
                   @dyayly555
                 </a>
               </div>

@@ -33,7 +33,7 @@ export default function HistoireClient({ content }: { content: HistoireContent }
         <motion.div initial="hidden" animate="show" variants={staggerContainer}>
           <motion.h1
             variants={fadeUp}
-            className="text-4xl md:text-6xl mb-10 text-amber-700 leading-tight text-center"
+            className="text-4xl md:text-6xl mb-10 text-[#A1887F] leading-tight text-center"
             style={{ fontFamily: 'var(--font-el-messiri), serif' }}
           >
             {content.title}

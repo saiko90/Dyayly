@@ -317,27 +317,59 @@ export default function AdminDashboard() {
       return;
     }
     setSavingPromo(true);
-    const { error } = await supabase.from('promo_codes').insert([{ code, percentage: pct }]);
-    if (error) toast.error(error.message);
-    else {
+    try {
+      const res = await fetch('/api/admin/promotions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, percentage: pct }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Erreur serveur');
       toast.success(`Code "${code}" créé !`);
       setPromoFormCode('');
       setPromoFormPct('');
       fetchPromoCodes();
+    } catch (err: any) {
+      toast.error(err.message || 'Impossible de créer le code.');
+    } finally {
+      setSavingPromo(false);
     }
-    setSavingPromo(false);
   };
 
   const handleDeletePromo = async (id: string, code: string) => {
     if (!window.confirm(`Supprimer le code "${code}" ?`)) return;
-    await supabase.from('promo_codes').delete().eq('id', id);
-    toast.success('Code supprimé.');
-    fetchPromoCodes();
+    try {
+      const res = await fetch('/api/admin/promotions', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Erreur serveur');
+      }
+      toast.success('Code supprimé.');
+      fetchPromoCodes();
+    } catch (err: any) {
+      toast.error(err.message || 'Impossible de supprimer le code.');
+    }
   };
 
   const handleTogglePromo = async (id: string, current: boolean) => {
-    await supabase.from('promo_codes').update({ is_active: !current }).eq('id', id);
-    fetchPromoCodes();
+    try {
+      const res = await fetch('/api/admin/promotions', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, is_active: !current }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Erreur serveur');
+      }
+      fetchPromoCodes();
+    } catch (err: any) {
+      toast.error(err.message || 'Impossible de modifier le code.');
+    }
   };
 
   // ── Newsletter ─────────────────────────────────────────────

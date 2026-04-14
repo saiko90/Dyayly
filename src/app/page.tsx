@@ -82,7 +82,7 @@ export default function Home() {
             className="text-base md:text-lg font-light text-purple-500 tracking-wide"
             style={{ fontFamily: 'var(--font-el-messiri), serif' }}
           >
-            🧚‍♀️ Créativité&nbsp;&nbsp;·&nbsp;&nbsp;✨ Eveil&nbsp;&nbsp;·&nbsp;&nbsp;Positivité 🌕
+            🧚‍♀️ Créativité&nbsp;&nbsp;·&nbsp;&nbsp;✨ Eveil&nbsp;&nbsp;·&nbsp;&nbsp;Positivité 🌝
           </p>
         </div>
       </div>
@@ -132,7 +132,12 @@ export default function Home() {
       {/* 4. Section Créations — données Supabase */}
       <section className="py-24 px-6 max-w-7xl mx-auto z-10 relative">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-serif italic text-stone-800 mb-6">Best sellers</h2>
+          <h2
+            className="text-3xl italic text-amber-700 mb-6"
+            style={{ fontFamily: 'var(--font-el-messiri), serif' }}
+          >
+            Best sellers
+          </h2>
         </div>
 
         {loadingProducts ? (

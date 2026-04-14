@@ -45,7 +45,11 @@ export default function BoutiquePage() {
           <motion.span variants={fadeUp} className="text-purple-500 uppercase tracking-[0.3em] text-xs font-medium mb-4 block">
             Les Créations
           </motion.span>
-          <motion.h1 variants={fadeUp} className="text-5xl md:text-7xl font-serif italic mb-8 leading-tight">
+          <motion.h1
+            variants={fadeUp}
+            className="text-4xl md:text-6xl mb-8 text-amber-700 leading-tight text-center"
+            style={{ fontFamily: 'var(--font-el-messiri), serif' }}
+          >
             Les Créations
           </motion.h1>
           <motion.div variants={fadeUp} className="h-px w-24 bg-purple-300 mx-auto mb-8" />

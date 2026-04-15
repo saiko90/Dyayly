@@ -86,7 +86,7 @@ export default function Home() {
         {bannerActive && (
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center justify-center py-1.5 bg-purple-400/70 backdrop-blur-sm hover:bg-purple-400/85 transition-colors w-full cursor-pointer border-b border-purple-300/30"
+            className="flex items-center justify-center py-1.5 bg-purple-400/25 backdrop-blur-sm hover:bg-purple-400/35 transition-colors w-full cursor-pointer border-b border-purple-300/20"
           >
             <p className="text-[10px] md:text-xs tracking-[0.25em] uppercase font-light text-white">
               {bannerText}
@@ -142,10 +142,10 @@ export default function Home() {
           className="space-y-12"
         >
           <h2
-            className="text-4xl font-serif italic text-stone-800"
+            className="text-4xl font-serif italic text-stone-800 text-center mx-auto"
             style={{ fontFamily: 'var(--font-el-messiri), serif' }}
           >
-            ✨ Révéler votre propre lumière ✨
+            ✨ Révéler votre<br className="block md:hidden" /> propre lumière ✨
           </h2>
           <p className="text-xl md:text-2xl leading-relaxed font-light text-stone-600">
             "Chaque création porte une intention : celle de déposer un éclat de douceur, d’amour et de clarté. Des bijoux faits à la main pour accompagner les renaissances intérieures."

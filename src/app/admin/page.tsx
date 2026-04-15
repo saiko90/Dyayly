@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Package, Users, BarChart3, Mail,
-  Settings, Plus, Trash2, Edit3, Image as ImageIcon, Send, X, Upload, Tag, ShoppingBag, Menu, FileText, Star,
+  Settings, Plus, Trash2, Edit3, Image as ImageIcon, Send, X, Upload, Tag, ShoppingBag, Menu, FileText, Star, KeyRound,
 } from 'lucide-react';
 import OrderCard from './OrderCard';
 import toast from 'react-hot-toast';
@@ -65,6 +65,16 @@ export default function AdminDashboard() {
   const [welcomePromoCode,  setWelcomePromoCode]  = useState('');
   const [loadingBanner,     setLoadingBanner]     = useState(false);
   const [savingBanner,      setSavingBanner]      = useState(false);
+
+  // ── Sécurité — Compte Supabase ────────────────────────────
+  const [newPassword,     setNewPassword]     = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [savingPassword,  setSavingPassword]  = useState(false);
+
+  // ── Sécurité — Zone Sécurisée (mot de passe maître) ───────
+  const [masterPassword,        setMasterPassword]        = useState('');
+  const [confirmMasterPassword, setConfirmMasterPassword] = useState('');
+  const [savingMasterPassword,  setSavingMasterPassword]  = useState(false);
 
   // ── Commandes ──────────────────────────────────────────────
   const [orders,        setOrders]        = useState<any[]>([]);
@@ -195,9 +205,19 @@ export default function AdminDashboard() {
     checkAuth();
   }, [router]);
 
-  const handleAdminLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleAdminLogin = async (e: { preventDefault(): void }) => {
     e.preventDefault();
-    if (adminPassword === 'Dyayly2026') {
+
+    // Récupère le mot de passe maître depuis site_settings (fallback sur l'ancien)
+    const { data: settingRow } = await supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'admin_master_password')
+      .single();
+
+    const masterPw = settingRow?.value ?? 'Dyayly2026';
+
+    if (adminPassword === masterPw) {
       setIsAdminAuthenticated(true);
       toast.success('Accès Administrateur autorisé', { icon: '🔓' });
       fetchProducts();
@@ -499,6 +519,79 @@ export default function AdminDashboard() {
     );
   }
 
+  // ── Sécurité — Mise à jour du code Zone Sécurisée ─────────
+  const handleUpdateMasterPassword = async (e: { preventDefault(): void }) => {
+    e.preventDefault();
+    if (masterPassword.length < 6) {
+      toast.error('Le code doit contenir au moins 6 caractères.');
+      return;
+    }
+    if (masterPassword !== confirmMasterPassword) {
+      toast.error('Les codes ne correspondent pas.');
+      return;
+    }
+    setSavingMasterPassword(true);
+    const res = await fetch('/api/admin/settings', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ admin_master_password: masterPassword }),
+    });
+    setSavingMasterPassword(false);
+    if (!res.ok) {
+      const data = await res.json();
+      toast.error(data.error || 'Erreur lors de la mise à jour.');
+      return;
+    }
+    toast.success('Code de la Zone Sécurisée mis à jour ✨');
+    setMasterPassword('');
+    setConfirmMasterPassword('');
+  };
+
+  // ── Sécurité — Mise à jour du mot de passe ────────────────
+  const handleUpdatePassword = async (e: { preventDefault(): void }) => {
+    e.preventDefault();
+
+    // Validations côté client
+    if (newPassword.length < 6) {
+      toast.error('Le mot de passe doit contenir au moins 6 caractères.');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error('Les mots de passe ne correspondent pas.');
+      return;
+    }
+
+    setSavingPassword(true);
+
+    // 1. Vérification de session active
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast.error('Session expirée. Veuillez vous reconnecter.');
+      setSavingPassword(false);
+      router.push('/login');
+      return;
+    }
+
+    // 2. Mise à jour du mot de passe
+    const { data, error } = await supabase.auth.updateUser({ password: newPassword });
+
+    setSavingPassword(false);
+
+    if (error) {
+      toast.error(error.message || 'Erreur lors de la mise à jour.');
+      return;
+    }
+
+    if (!data?.user) {
+      toast.error('La mise à jour a échoué. Veuillez réessayer.');
+      return;
+    }
+
+    toast.success('Mot de passe mis à jour avec succès ✨');
+    setNewPassword('');
+    setConfirmPassword('');
+  };
+
   const tabs = [
     { id: 'dashboard',   icon: LayoutDashboard, label: "Vue d'ensemble" },
     { id: 'commandes',   icon: ShoppingBag,     label: 'Commandes' },
@@ -508,6 +601,7 @@ export default function AdminDashboard() {
     { id: 'newsletter',  icon: Mail,            label: 'Newsletter' },
     { id: 'promos',      icon: Tag,             label: 'Promotions' },
     { id: 'contenu',     icon: FileText,        label: 'Contenu du site' },
+    { id: 'securite',   icon: KeyRound,        label: 'Sécurité' },
   ];
 
   return (
@@ -1420,6 +1514,144 @@ export default function AdminDashboard() {
                     </div>
                   </form>
                 )}
+              </div>
+            </motion.div>
+          )}
+
+          {/* ── SÉCURITÉ ── */}
+          {activeTab === 'securite' && (
+            <motion.div
+              key="securite"
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+              className="space-y-10 max-w-xl"
+            >
+              <div>
+                <h1 className="text-2xl font-semibold text-stone-800">Sécurité</h1>
+                <p className="text-stone-500 font-light">Gérez les deux mots de passe du système.</p>
+              </div>
+
+              {/* ── Carte A : Mot de passe du compte ── */}
+              <div className="bg-white p-8 rounded-3xl shadow-sm border border-stone-200 space-y-6">
+                <div>
+                  <h2 className="text-lg font-semibold text-stone-800 flex items-center gap-2">
+                    <KeyRound className="w-4 h-4 text-purple-400" />
+                    Mot de passe du compte (Connexion principale)
+                  </h2>
+                  <p className="text-sm text-stone-500 font-light mt-1">
+                    Ce mot de passe vous sert à vous connecter à votre compte sur la page de connexion standard — celui associé à <span className="font-medium text-stone-700">contact@dyayly.ch</span>.
+                  </p>
+                </div>
+
+                <form onSubmit={handleUpdatePassword} className="space-y-5">
+                  <div>
+                    <label className="block text-xs uppercase tracking-widest text-stone-500 mb-2">
+                      Nouveau mot de passe
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      minLength={6}
+                      value={newPassword}
+                      onChange={e => setNewPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full p-4 rounded-xl border border-stone-200 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-purple-300 text-sm"
+                    />
+                    <p className="text-xs text-stone-400 mt-1.5">Minimum 6 caractères.</p>
+                  </div>
+                  <div>
+                    <label className="block text-xs uppercase tracking-widest text-stone-500 mb-2">
+                      Confirmer le nouveau mot de passe
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      minLength={6}
+                      value={confirmPassword}
+                      onChange={e => setConfirmPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className={`w-full p-4 rounded-xl border bg-stone-50 focus:outline-none focus:ring-2 focus:ring-purple-300 text-sm transition-colors ${
+                        confirmPassword && confirmPassword !== newPassword
+                          ? 'border-red-300 focus:ring-red-200'
+                          : 'border-stone-200'
+                      }`}
+                    />
+                    {confirmPassword && confirmPassword !== newPassword && (
+                      <p className="text-xs text-red-400 mt-1.5">Les mots de passe ne correspondent pas.</p>
+                    )}
+                  </div>
+                  <div className="flex justify-end pt-2">
+                    <button
+                      type="submit"
+                      disabled={savingPassword}
+                      className="flex items-center gap-2 bg-purple-200 text-stone-900 font-bold px-8 py-4 rounded-full hover:bg-purple-300 transition shadow-lg text-sm uppercase tracking-wider disabled:opacity-50"
+                    >
+                      <KeyRound className="w-4 h-4" />
+                      {savingPassword ? 'Mise à jour…' : 'Modifier le mot de passe du compte'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* ── Carte B : Code Zone Sécurisée ── */}
+              <div className="bg-white p-8 rounded-3xl shadow-sm border border-amber-200 space-y-6">
+                <div>
+                  <h2 className="text-lg font-semibold text-stone-800 flex items-center gap-2">
+                    <Settings className="w-4 h-4 text-amber-500" />
+                    Code de la Zone Sécurisée (Dashboard)
+                  </h2>
+                  <p className="text-sm text-stone-500 font-light mt-1">
+                    Ce code maître sert uniquement à déverrouiller l'accès au tableau de bord (popup <span className="font-medium text-stone-700">"Zone Sécurisée"</span>). Il est indépendant de votre compte Supabase.
+                  </p>
+                </div>
+
+                <form onSubmit={handleUpdateMasterPassword} className="space-y-5">
+                  <div>
+                    <label className="block text-xs uppercase tracking-widest text-stone-500 mb-2">
+                      Nouveau code maître
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      minLength={6}
+                      value={masterPassword}
+                      onChange={e => setMasterPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full p-4 rounded-xl border border-stone-200 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-amber-300 text-sm"
+                    />
+                    <p className="text-xs text-stone-400 mt-1.5">Minimum 6 caractères.</p>
+                  </div>
+                  <div>
+                    <label className="block text-xs uppercase tracking-widest text-stone-500 mb-2">
+                      Confirmer le nouveau code
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      minLength={6}
+                      value={confirmMasterPassword}
+                      onChange={e => setConfirmMasterPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className={`w-full p-4 rounded-xl border bg-stone-50 focus:outline-none focus:ring-2 focus:ring-amber-300 text-sm transition-colors ${
+                        confirmMasterPassword && confirmMasterPassword !== masterPassword
+                          ? 'border-red-300 focus:ring-red-200'
+                          : 'border-stone-200'
+                      }`}
+                    />
+                    {confirmMasterPassword && confirmMasterPassword !== masterPassword && (
+                      <p className="text-xs text-red-400 mt-1.5">Les codes ne correspondent pas.</p>
+                    )}
+                  </div>
+                  <div className="flex justify-end pt-2">
+                    <button
+                      type="submit"
+                      disabled={savingMasterPassword}
+                      className="flex items-center gap-2 bg-amber-100 text-stone-900 font-bold px-8 py-4 rounded-full hover:bg-amber-200 transition shadow-lg text-sm uppercase tracking-wider disabled:opacity-50"
+                    >
+                      <Settings className="w-4 h-4" />
+                      {savingMasterPassword ? 'Mise à jour…' : 'Modifier le code de la zone sécurisée'}
+                    </button>
+                  </div>
+                </form>
               </div>
             </motion.div>
           )}
